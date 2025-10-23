@@ -47,5 +47,5 @@ Pacientes jóvenes y adultos que buscan una forma rápida, moderna y confiable d
 5. **Mis Citas:** Calendario y listado de citas.
 6. **Perfil del Paciente.**
 
-📎 **Enlace al prototipo Figma:** [Añadir aquí el enlace del diseño](https://www.figma.com/)
+📎 **Enlace al prototipo Figma:** https://www.figma.com/make/QWOHgKKIefRiGSiYTL8zOg/MediTurn-App-Views?node-id=0-1&t=ycZM8o0khEL4Kazb-1
 
