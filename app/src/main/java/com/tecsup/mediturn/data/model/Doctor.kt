@@ -1,5 +1,6 @@
 package com.tecsup.mediturn.data.model
 
+
 data class Doctor(
     val id: String,
     val name: String,
