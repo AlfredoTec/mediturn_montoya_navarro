@@ -8,12 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 data class HomeUiState(
-    val featuredDoctors: List<Doctor> = emptyList(),
-    val isLoading: Boolean = false
+    val featuredDoctors: List<Doctor> = emptyList()
 )
 
 class HomeViewModel : ViewModel() {
-
     private val doctorRepository = DoctorRepository()
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -24,8 +22,7 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun loadFeaturedDoctors() {
-        _uiState.value = _uiState.value.copy(
-            featuredDoctors = doctorRepository.getAllDoctors().take(3)
-        )
+        val doctors = doctorRepository.getAllDoctors().take(6)
+        _uiState.value = _uiState.value.copy(featuredDoctors = doctors)
     }
 }

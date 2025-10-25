@@ -10,24 +10,27 @@ import kotlinx.coroutines.flow.asStateFlow
 data class SearchUiState(
     val searchQuery: String = "",
     val selectedFilter: String = "Todos",
-    val doctors: List<Doctor> = emptyList(),
-    val isLoading: Boolean = false
+    val doctors: List<Doctor> = emptyList()
 )
 
 class SearchViewModel : ViewModel() {
-
     private val doctorRepository = DoctorRepository()
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     init {
-        loadDoctors()
+        loadAllDoctors()
+    }
+
+    private fun loadAllDoctors() {
+        val doctors = doctorRepository.getAllDoctors()
+        _uiState.value = _uiState.value.copy(doctors = doctors)
     }
 
     fun onSearchQueryChange(query: String) {
         _uiState.value = _uiState.value.copy(searchQuery = query)
-        searchDoctors()
+        filterDoctors()
     }
 
     fun onFilterSelected(filter: String) {
@@ -35,25 +38,15 @@ class SearchViewModel : ViewModel() {
         filterDoctors()
     }
 
-    private fun loadDoctors() {
-        _uiState.value = _uiState.value.copy(
-            doctors = doctorRepository.getAllDoctors()
-        )
-    }
-
-    private fun searchDoctors() {
-        val query = _uiState.value.searchQuery
-        val doctors = if (query.isBlank()) {
-            doctorRepository.getAllDoctors()
-        } else {
-            doctorRepository.searchByName(query)
-        }
-        _uiState.value = _uiState.value.copy(doctors = doctors)
-    }
-
     private fun filterDoctors() {
-        val filter = _uiState.value.selectedFilter
-        val doctors = doctorRepository.searchBySpecialty(filter)
-        _uiState.value = _uiState.value.copy(doctors = doctors)
+        val allDoctors = doctorRepository.getAllDoctors()
+        val filtered = allDoctors.filter { doctor ->
+            val matchesSearch = _uiState.value.searchQuery.isEmpty() ||
+                    doctor.name.contains(_uiState.value.searchQuery, ignoreCase = true)
+            val matchesFilter = _uiState.value.selectedFilter == "Todos" ||
+                    doctor.specialty == _uiState.value.selectedFilter
+            matchesSearch && matchesFilter
+        }
+        _uiState.value = _uiState.value.copy(doctors = filtered)
     }
 }

@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,182 +32,72 @@ fun ProfileScreen(
                 title = { Text("Mi Perfil") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, "Volver")
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.toggleEditMode() }) {
                         Icon(
-                            imageVector = if (uiState.isEditing) Icons.Default.Check else Icons.Default.Edit,
-                            contentDescription = if (uiState.isEditing) "Guardar" else "Editar"
+                            if (uiState.isEditing) Icons.Default.Check else Icons.Default.Edit,
+                            if (uiState.isEditing) "Guardar" else "Editar"
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Profile Header
+            // Header
             item {
-                ProfileHeader(patient = uiState.patient)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.size(100.dp).clip(CircleShape).background(Color(0xFF2563EB)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = uiState.patient.name.split(" ").map { it.first() }.take(2).joinToString(""),
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                    Text(uiState.patient.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                }
             }
 
-            // Personal Information
+            // Personal Info
             item {
-                SectionTitle(title = "Información Personal")
+                Text("Información Personal", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
             }
 
+            item { ProfileInfoCard(Icons.Default.Email, "Email", uiState.patient.email, uiState.isEditing) }
+            item { ProfileInfoCard(Icons.Default.Phone, "Teléfono", uiState.patient.phone.ifEmpty { "No registrado" }, uiState.isEditing) }
+            item { ProfileInfoCard(Icons.Default.CalendarToday, "Fecha Nacimiento", uiState.patient.dateOfBirth.ifEmpty { "No registrado" }, uiState.isEditing) }
+
+            // Settings
             item {
-                ProfileInfoCard(
-                    icon = Icons.Default.Email,
-                    label = "Correo electrónico",
-                    value = uiState.patient.email,
-                    isEditing = uiState.isEditing
-                )
+                Text("Configuración", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
             }
 
-            item {
-                ProfileInfoCard(
-                    icon = Icons.Default.Phone,
-                    label = "Teléfono",
-                    value = uiState.patient.phone,
-                    isEditing = uiState.isEditing
-                )
-            }
-
-            item {
-                ProfileInfoCard(
-                    icon = Icons.Default.CalendarToday,
-                    label = "Fecha de nacimiento",
-                    value = uiState.patient.dateOfBirth,
-                    isEditing = uiState.isEditing
-                )
-            }
-
-            // Medical Information
-            item {
-                SectionTitle(title = "Información Médica")
-            }
-
-            item {
-                ProfileInfoCard(
-                    icon = Icons.Default.Favorite,
-                    label = "Tipo de sangre",
-                    value = uiState.patient.bloodType,
-                    isEditing = uiState.isEditing
-                )
-            }
-
-            item {
-                ProfileInfoCard(
-                    icon = Icons.Default.Warning,
-                    label = "Alergias",
-                    value = uiState.patient.allergies.joinToString(", "),
-                    isEditing = uiState.isEditing
-                )
-            }
-
-            // Emergency Contact
-            item {
-                SectionTitle(title = "Contacto de Emergencia")
-            }
-
-            item {
-                ProfileInfoCard(
-                    icon = Icons.Default.Person,
-                    label = "Contacto",
-                    value = uiState.patient.emergencyContact,
-                    isEditing = uiState.isEditing
-                )
-            }
-
-            // Settings Options
-            item {
-                SectionTitle(title = "Configuración")
-            }
-
-            item {
-                SettingsOption(
-                    icon = Icons.Default.Notifications,
-                    title = "Notificaciones",
-                    subtitle = "Gestionar recordatorios"
-                )
-            }
-
-            item {
-                SettingsOption(
-                    icon = Icons.Default.Lock,
-                    title = "Privacidad",
-                    subtitle = "Configuración de privacidad"
-                )
-            }
-
-            item {
-                SettingsOption(
-                    icon = Icons.Default.Info,
-                    title = "Acerca de",
-                    subtitle = "Versión 1.0.0"
-                )
-            }
+            item { SettingsOption(Icons.Default.Notifications, "Notificaciones", "Gestionar recordatorios") }
+            item { SettingsOption(Icons.Default.Lock, "Privacidad", "Configuración de privacidad") }
+            item { SettingsOption(Icons.Default.Info, "Acerca de", "MediTurn v1.0") }
         }
     }
-}
-
-@Composable
-private fun ProfileHeader(patient: com.tecsup.mediturn.data.model.Patient) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // Avatar
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF2563EB)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = patient.name.split(" ").map { it.first() }.take(2).joinToString(""),
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-
-        // Name
-        Text(
-            text = patient.name,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1F2937)
-        )
-    }
-}
-
-@Composable
-private fun SectionTitle(title: String) {
-    Text(
-        text = title,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = Color(0xFF1F2937)
-    )
 }
 
 @Composable
 private fun ProfileInfoCard(
-    icon: ImageVector,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
     value: String,
     isEditing: Boolean
@@ -216,36 +105,21 @@ private fun ProfileInfoCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF9FAFB)
-        )
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB))
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = Color(0xFF2563EB),
-                modifier = Modifier.size(24.dp)
-            )
-
+            Icon(icon, null, modifier = Modifier.size(24.dp), tint = Color(0xFF2563EB))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = label,
-                    fontSize = 12.sp,
-                    color = Color(0xFF6B7280)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
+                Text(label, fontSize = 12.sp, color = Color(0xFF6B7280))
+                Spacer(Modifier.height(4.dp))
                 if (isEditing) {
                     OutlinedTextField(
                         value = value,
-                        onValueChange = { /* Handle change */ },
+                        onValueChange = {},
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -254,65 +128,36 @@ private fun ProfileInfoCard(
                         )
                     )
                 } else {
-                    Text(
-                        text = value,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1F2937)
-                    )
+                    Text(value, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsOption(
-    icon: ImageVector,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     subtitle: String
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        onClick = { /* Handle click */ }
+        onClick = {}
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = Color(0xFF6B7280),
-                modifier = Modifier.size(24.dp)
-            )
-
+            Icon(icon, null, modifier = Modifier.size(24.dp), tint = Color(0xFF6B7280))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1F2937)
-                )
-                Text(
-                    text = subtitle,
-                    fontSize = 12.sp,
-                    color = Color(0xFF6B7280)
-                )
+                Text(title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(subtitle, fontSize = 12.sp, color = Color(0xFF6B7280))
             }
-
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = null,
-                tint = Color(0xFF9CA3AF)
-            )
+            Icon(Icons.Default.KeyboardArrowRight, null, tint = Color(0xFF9CA3AF))
         }
     }
 }

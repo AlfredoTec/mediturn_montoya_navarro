@@ -6,11 +6,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.tecsup.mediturn.ui.AppointmentsScreen
 import com.tecsup.mediturn.ui.screens.home.HomeScreen
 import com.tecsup.mediturn.ui.screens.search.SearchScreen
 import com.tecsup.mediturn.ui.screens.detail.DoctorDetailScreen
 import com.tecsup.mediturn.ui.screens.booking.BookingScreen
+import com.tecsup.mediturn.ui.screens.appointments.AppointmentsScreen
 import com.tecsup.mediturn.ui.screens.profile.ProfileScreen
 import com.tecsup.mediturn.ui.screens.confirmation.ConfirmationScreen
 
@@ -20,117 +20,88 @@ fun NavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = Routes.Home.route
     ) {
-        // Home Screen
-        composable(route = Routes.Home.route) {
+        // Home
+        composable(Routes.Home.route) {
             HomeScreen(
-                onNavigateToSearch = {
-                    navController.navigate(Routes.Search.route)
-                },
-                onNavigateToAppointments = {
-                    navController.navigate(Routes.Appointments.route)
-                },
-                onNavigateToProfile = {
-                    navController.navigate(Routes.Profile.route)
-                },
+                onSearchClick = { navController.navigate(Routes.Search.route) },
                 onDoctorClick = { doctorId ->
                     navController.navigate(Routes.DoctorDetail.createRoute(doctorId))
-                }
+                },
+                onAppointmentsClick = { navController.navigate(Routes.Appointments.route) },
+                onProfileClick = { navController.navigate(Routes.Profile.route) },
+                onSpecialtyClick = { navController.navigate(Routes.Search.route) }
             )
         }
 
-        // Search Screen
-        composable(route = Routes.Search.route) {
+        // Search
+        composable(Routes.Search.route) {
             SearchScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
+                onNavigateBack = { navController.popBackStack() },
                 onDoctorClick = { doctorId ->
                     navController.navigate(Routes.DoctorDetail.createRoute(doctorId))
                 }
             )
         }
 
-        // Doctor Detail Screen
+        // Doctor Detail
         composable(
             route = Routes.DoctorDetail.route,
-            arguments = listOf(
-                navArgument("doctorId") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val doctorId = backStackEntry.arguments?.getString("doctorId") ?: ""
+            val doctorId = backStackEntry.arguments?.getString("doctorId") ?: "doc_1"
             DoctorDetailScreen(
                 doctorId = doctorId,
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
+                onNavigateBack = { navController.popBackStack() },
                 onBookAppointment = { doctorId ->
                     navController.navigate(Routes.Booking.createRoute(doctorId))
                 }
             )
         }
 
-        // Booking Screen
+        // Booking
         composable(
             route = Routes.Booking.route,
-            arguments = listOf(
-                navArgument("doctorId") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val doctorId = backStackEntry.arguments?.getString("doctorId") ?: ""
+            val doctorId = backStackEntry.arguments?.getString("doctorId") ?: "doc_1"
             BookingScreen(
                 doctorId = doctorId,
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onNavigateToConfirmation = { appointmentId ->
-                    navController.navigate(Routes.Confirmation.createRoute(appointmentId)) {
-                        // Clear back stack to prevent going back to booking
-                        popUpTo(Routes.Home.route) { inclusive = false }
-                    }
+                onNavigateBack = { navController.popBackStack() },
+                onConfirmBooking = { appointmentId ->
+                    navController.navigate(Routes.Confirmation.createRoute(appointmentId))
                 }
             )
         }
 
-        // Appointments Screen
-        composable(route = Routes.Appointments.route) {
+        // Appointments
+        composable(Routes.Appointments.route) {
             AppointmentsScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onAppointmentClick = { appointmentId ->
-                    // TODO: Navigate to appointment detail if needed
-                }
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
-        // Profile Screen
-        composable(route = Routes.Profile.route) {
+        // Profile
+        composable(Routes.Profile.route) {
             ProfileScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
-        // Confirmation Screen
+        // Confirmation
         composable(
             route = Routes.Confirmation.route,
-            arguments = listOf(
-                navArgument("appointmentId") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
         ) { backStackEntry ->
             val appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: ""
             ConfirmationScreen(
                 appointmentId = appointmentId,
-                onNavigateToHome = {
+                onGoToHome = {
                     navController.navigate(Routes.Home.route) {
                         popUpTo(Routes.Home.route) { inclusive = true }
                     }
                 },
-                onNavigateToAppointments = {
-                    navController.navigate(Routes.Appointments.route) {
-                        popUpTo(Routes.Home.route) { inclusive = false }
-                    }
+                onViewAppointments = {
+                    navController.navigate(Routes.Appointments.route)
                 }
             )
         }

@@ -13,7 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-//Chip de especialidad médica
+
+// Chip de especialidad médica
 
 @Composable
 fun SpecialtyChip(
@@ -163,7 +164,7 @@ fun EmptyState(
     }
 }
 
-//Loading indicator
+// Indicador de carga
 
 @Composable
 fun LoadingIndicator(

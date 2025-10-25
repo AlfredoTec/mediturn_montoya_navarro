@@ -4,12 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.VideoCall
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,29 +24,14 @@ import com.tecsup.mediturn.ui.components.TimeSlotButton
 fun BookingScreen(
     doctorId: String,
     onNavigateBack: () -> Unit,
-    onNavigateToConfirmation: (String) -> Unit,
+    onConfirmBooking: (String) -> Unit,
     viewModel: BookingViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
     LaunchedEffect(doctorId) {
         viewModel.loadDoctor(doctorId)
     }
 
-    // Navigate to confirmation when booking is complete
-    LaunchedEffect(uiState.bookingComplete) {
-        if (uiState.bookingComplete && uiState.appointmentId != null) {
-            onNavigateToConfirmation(uiState.appointmentId!!)
-        }
-    }
-
-    // Show error snackbar
-    uiState.error?.let { error ->
-        LaunchedEffect(error) {
-            // Show snackbar (would need SnackbarHost in real implementation)
-            viewModel.clearError()
-        }
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -57,164 +39,146 @@ fun BookingScreen(
                 title = { Text("Agendar Cita") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, "Volver")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
+        },
+        bottomBar = {
+            Surface(shadowElevation = 8.dp) {
+                Button(
+                    onClick = {
+                        val appointmentId = viewModel.bookAppointment()
+                        if (appointmentId.isNotEmpty()) {
+                            onConfirmBooking(appointmentId)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = uiState.selectedTimeSlot != null
+                ) {
+                    Text("Confirmar Reserva", modifier = Modifier.padding(8.dp))
+                }
+            }
         }
     ) { paddingValues ->
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                // Doctor Info
-                item {
-                    uiState.doctor?.let { doctor ->
-                        DoctorInfoSection(doctor = doctor)
-                    }
-                }
-
-                // Consultation Type
-                item {
-                    ConsultationTypeSection(
-                        selectedType = uiState.selectedConsultationType,
-                        isTelehealthAvailable = uiState.doctor?.isTelehealthAvailable ?: false,
-                        onTypeSelected = { viewModel.selectConsultationType(it) }
-                    )
-                }
-
-                // Date Selection
-                item {
-                    DateSelectionSection(
-                        availableDates = uiState.availableDates,
-                        selectedDate = uiState.selectedDate,
-                        onDateSelected = { viewModel.selectDate(it) }
-                    )
-                }
-
-                // Time Selection
-                item {
-                    TimeSelectionSection(
-                        availableSlots = uiState.availableTimeSlots.map { it.time },
-                        selectedTime = uiState.selectedTime,
-                        onTimeSelected = { viewModel.selectTime(it) }
-                    )
-                }
-
-                // Reason
-                item {
-                    ReasonSection(
-                        reason = uiState.reason,
-                        onReasonChange = { viewModel.updateReason(it) }
-                    )
-                }
-
-                // Book Button
-                item {
-                    Button(
-                        onClick = { viewModel.bookAppointment() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        enabled = !uiState.isLoading,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF2563EB)
-                        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // Doctor Info
+            item {
+                uiState.doctor?.let { doctor ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(
-                            text = "Confirmar Cita",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        Column(Modifier.padding(16.dp)) {
+                            Text(
+                                text = doctor.name,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = doctor.specialty,
+                                color = Color(0xFF6B7280)
+                            )
+                        }
                     }
                 }
             }
-        }
-    }
-}
 
-@Composable
-private fun DoctorInfoSection(doctor: com.tecsup.mediturn.data.model.Doctor) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB))
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = doctor.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1F2937)
-            )
-            Text(
-                text = doctor.specialty,
-                fontSize = 14.sp,
-                color = Color(0xFF6B7280)
-            )
-            Text(
-                text = doctor.location,
-                fontSize = 14.sp,
-                color = Color(0xFF6B7280)
-            )
-        }
-    }
-}
+            // Consultation Type
+            item {
+                Column {
+                    Text(
+                        text = "Tipo de Consulta",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        ConsultationTypeCard(
+                            title = "Presencial",
+                            icon = Icons.Default.LocalHospital,
+                            isSelected = uiState.consultationType == ConsultationType.IN_PERSON,
+                            onClick = {
+                                viewModel.onConsultationTypeChanged(ConsultationType.IN_PERSON)
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
 
-@Composable
-private fun ConsultationTypeSection(
-    selectedType: ConsultationType,
-    isTelehealthAvailable: Boolean,
-    onTypeSelected: (ConsultationType) -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = "Tipo de Consulta",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1F2937)
-        )
+                        if (uiState.doctor?.isTelehealthAvailable == true) {
+                            ConsultationTypeCard(
+                                title = "Teleconsulta",
+                                icon = Icons.Default.VideoCall,
+                                isSelected = uiState.consultationType == ConsultationType.TELEHEALTH,
+                                onClick = {
+                                    viewModel.onConsultationTypeChanged(ConsultationType.TELEHEALTH)
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ConsultationTypeCard(
-                title = "Presencial",
-                icon = Icons.Default.LocationOn,
-                isSelected = selectedType == ConsultationType.IN_PERSON,
-                onClick = { onTypeSelected(ConsultationType.IN_PERSON) },
-                modifier = Modifier.weight(1f)
-            )
+            // Time Slots
+            item {
+                Column {
+                    Text(
+                        text = "Selecciona Fecha y Hora",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(12.dp))
 
-            ConsultationTypeCard(
-                title = "Teleconsulta",
-                icon = Icons.Default.VideoCall,
-                isSelected = selectedType == ConsultationType.TELEHEALTH,
-                enabled = isTelehealthAvailable,
-                onClick = { onTypeSelected(ConsultationType.TELEHEALTH) },
-                modifier = Modifier.weight(1f)
-            )
+                    uiState.doctor?.availableTimeSlots?.let { slots ->
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(slots) { slot ->
+                                TimeSlotButton(
+                                    time = slot.time,
+                                    date = slot.date,
+                                    isSelected = uiState.selectedTimeSlot == slot,
+                                    isAvailable = slot.isAvailable,
+                                    onClick = { viewModel.onTimeSlotSelected(slot) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Reason
+            item {
+                Column {
+                    Text(
+                        text = "Motivo de la Consulta (Opcional)",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = uiState.reason,
+                        onValueChange = { viewModel.onReasonChanged(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Describe tu motivo...") },
+                        minLines = 3,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                }
+            }
         }
     }
 }
@@ -226,25 +190,18 @@ private fun ConsultationTypeCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Card(
-        onClick = onClick,
         modifier = modifier,
-        enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFF2563EB).copy(alpha = 0.1f)
-            else Color.White,
-            disabledContainerColor = Color(0xFFF3F4F6)
+            containerColor = if (isSelected) Color(0xFF2563EB) else Color.White
         ),
-        border = CardDefaults.outlinedCardBorder().copy(
-            width = if (isSelected) 2.dp else 1.dp,
-            brush = androidx.compose.ui.graphics.SolidColor(
-                if (isSelected) Color(0xFF2563EB) else Color(0xFFE5E7EB)
-            )
-        )
+        border = if (!isSelected) {
+            androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE5E7EB))
+        } else null,
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier
@@ -256,117 +213,14 @@ private fun ConsultationTypeCard(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isSelected) Color(0xFF2563EB) else Color(0xFF6B7280),
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
+                tint = if (isSelected) Color.White else Color(0xFF2563EB)
             )
             Text(
                 text = title,
-                fontSize = 14.sp,
-                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                color = if (enabled) Color(0xFF1F2937) else Color(0xFF9CA3AF)
+                fontWeight = FontWeight.Medium,
+                color = if (isSelected) Color.White else Color(0xFF1F2937)
             )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DateSelectionSection(
-    availableDates: List<String>,
-    selectedDate: String,
-    onDateSelected: (String) -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = "Fecha",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1F2937)
-        )
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(availableDates) { date ->
-                FilterChip(
-                    selected = selectedDate == date,
-                    onClick = { onDateSelected(date) },
-                    label = { Text(date) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF2563EB),
-                        selectedLabelColor = Color.White
-                    )
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun TimeSelectionSection(
-    availableSlots: List<String>,
-    selectedTime: String,
-    onTimeSelected: (String) -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = "Horario",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1F2937)
-        )
-
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            availableSlots.chunked(3).forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    row.forEach { time ->
-                        TimeSlotButton(
-                            time = time,
-                            isSelected = selectedTime == time,
-                            onClick = { onTimeSelected(time) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    // Fill remaining space if row is not complete
-                    repeat(3 - row.size) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ReasonSection(
-    reason: String,
-    onReasonChange: (String) -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = "Motivo de la Consulta",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1F2937)
-        )
-
-        OutlinedTextField(
-            value = reason,
-            onValueChange = onReasonChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            placeholder = {
-                Text("Describe brevemente el motivo de tu consulta...")
-            },
-            shape = RoundedCornerShape(12.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF2563EB),
-                unfocusedBorderColor = Color(0xFFE5E7EB)
-            )
-        )
     }
 }
