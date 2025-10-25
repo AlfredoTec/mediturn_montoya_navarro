@@ -5,23 +5,45 @@ import com.tecsup.mediturn.data.model.Doctor
 
 class DoctorRepository {
 
+    /**
+     * Obtiene todos los doctores
+     */
     fun getAllDoctors(): List<Doctor> {
         return SampleData.sampleDoctors
     }
 
+    /**
+     * Obtiene un doctor por ID
+     */
     fun getDoctorById(id: String): Doctor? {
-        return SampleData.sampleDoctors.find { it.id == id }
+        return SampleData.sampleDoctors.find { it?.id == id }
     }
 
-    fun searchDoctors(query: String): List<Doctor> {
-        if (query.isBlank()) return getAllDoctors()
+    /**
+     * Busca doctores por especialidad
+     */
+    fun searchBySpecialty(specialty: String): List<Doctor> {
+        if (specialty == "Todos") return getAllDoctors()
         return SampleData.sampleDoctors.filter {
-            it.name.contains(query, ignoreCase = true) ||
-                    it.specialty.contains(query, ignoreCase = true)
+            it.specialty.equals(specialty, ignoreCase = true)
         }
     }
 
-    fun getDoctorsBySpecialty(specialty: String): List<Doctor> {
-        return SampleData.sampleDoctors.filter { it.specialty == specialty }
+    /**
+     * Busca doctores por nombre
+     */
+    fun searchByName(query: String): List<Doctor> {
+        if (query.isBlank()) return getAllDoctors()
+        return SampleData.sampleDoctors.filter {
+            it.name.contains(query, ignoreCase = true)
+        }
+    }
+
+    /**
+     * Filtra doctores por disponibilidad de teleconsulta
+     */
+    fun filterByTelehealth(telehealthOnly: Boolean): List<Doctor> {
+        if (!telehealthOnly) return getAllDoctors()
+        return SampleData.sampleDoctors.filter { it.isTelehealthAvailable }
     }
 }
