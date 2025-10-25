@@ -1,24 +1,22 @@
 package com.tecsup.mediturn.ui.screens.search
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.tecsup.mediturn.data.model.Doctor
 import com.tecsup.mediturn.data.repository.DoctorRepository
+import com.tecsup.mediturn.data.model.Doctor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 data class SearchUiState(
-    val isLoading: Boolean = false,
     val searchQuery: String = "",
+    val selectedFilter: String = "Todos",
     val doctors: List<Doctor> = emptyList(),
-    val selectedFilter: String = "Todos"
+    val isLoading: Boolean = false
 )
 
-class SearchViewModel(
-    private val repository: DoctorRepository = DoctorRepository()
-) : ViewModel() {
+class SearchViewModel : ViewModel() {
+
+    private val doctorRepository = DoctorRepository()
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
@@ -29,28 +27,33 @@ class SearchViewModel(
 
     fun onSearchQueryChange(query: String) {
         _uiState.value = _uiState.value.copy(searchQuery = query)
-        searchDoctors(query)
+        searchDoctors()
     }
 
     fun onFilterSelected(filter: String) {
         _uiState.value = _uiState.value.copy(selectedFilter = filter)
+        filterDoctors()
     }
 
     private fun loadDoctors() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            val doctors = repository.getAllDoctors()
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                doctors = doctors
-            )
-        }
+        _uiState.value = _uiState.value.copy(
+            doctors = doctorRepository.getAllDoctors()
+        )
     }
 
-    private fun searchDoctors(query: String) {
-        viewModelScope.launch {
-            val doctors = repository.searchDoctors(query)
-            _uiState.value = _uiState.value.copy(doctors = doctors)
+    private fun searchDoctors() {
+        val query = _uiState.value.searchQuery
+        val doctors = if (query.isBlank()) {
+            doctorRepository.getAllDoctors()
+        } else {
+            doctorRepository.searchByName(query)
         }
+        _uiState.value = _uiState.value.copy(doctors = doctors)
+    }
+
+    private fun filterDoctors() {
+        val filter = _uiState.value.selectedFilter
+        val doctors = doctorRepository.searchBySpecialty(filter)
+        _uiState.value = _uiState.value.copy(doctors = doctors)
     }
 }
