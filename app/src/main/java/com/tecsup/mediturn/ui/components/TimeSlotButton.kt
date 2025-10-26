@@ -12,18 +12,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun TimeSlotButton(
-    time: String,
-    date: String,
+    modifier: Modifier = Modifier,
+    date: Date,
     isSelected: Boolean,
     isAvailable: Boolean = true,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
+    val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
+    val timeFormatter = SimpleDateFormat("hh:mm a", Locale("es", "ES"))
     Card(
         modifier = modifier
             .width(110.dp)
@@ -52,7 +57,7 @@ fun TimeSlotButton(
         ) {
             // Fecha
             Text(
-                text = date,
+                text = dateFormatter.format(date),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 color = when {
@@ -64,7 +69,7 @@ fun TimeSlotButton(
 
             // Hora
             Text(
-                text = time,
+                text = timeFormatter.format(date),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = when {

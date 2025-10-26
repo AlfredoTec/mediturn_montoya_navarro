@@ -2,7 +2,6 @@ package com.tecsup.mediturn.ui.screens.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.tecsup.mediturn.data.model.SampleData
 import com.tecsup.mediturn.ui.components.DoctorCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,6 +28,7 @@ fun HomeScreen(
     onSpecialtyClick: (String) -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
+    val patient = SampleData.currentPatient
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -36,7 +37,7 @@ fun HomeScreen(
                 title = {
                     Column {
                         Text("Bienvenido", fontSize = 14.sp, color = Color(0xFF6B7280))
-                        Text("Juan Pérez", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text(patient.name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 },
                 actions = {
@@ -55,7 +56,6 @@ fun HomeScreen(
         ) {
             item { SearchBarSection(onSearchClick) }
             item { QuickActionsSection(onSearchClick, onAppointmentsClick) }
-            item { SpecialtiesSection(onSpecialtyClick) }
             item {
                 Text("Doctores Destacados", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
             }
@@ -135,39 +135,5 @@ private fun QuickActionCard(
             Icon(icon, null, tint = Color.White, modifier = Modifier.size(32.dp))
             Text(title, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
         }
-    }
-}
-
-@Composable
-private fun SpecialtiesSection(onSpecialtyClick: (String) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Especialidades", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            val specialties = listOf(
-                "Medicina General", "Cardiología", "Pediatría",
-                "Dermatología", "Neurología", "Traumatología"
-            )
-            items(specialties) { specialty ->
-                SpecialtyChip(specialty = specialty, onClick = { onSpecialtyClick(specialty) })
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SpecialtyChip(specialty: String, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF3F4F6))
-    ) {
-        Text(
-            text = specialty,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color(0xFF374151)
-        )
     }
 }

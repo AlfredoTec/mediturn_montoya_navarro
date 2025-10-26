@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import com.tecsup.mediturn.data.model.Appointment
 import com.tecsup.mediturn.data.model.AppointmentStatus
 import com.tecsup.mediturn.data.model.ConsultationType
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun AppointmentCard(
@@ -26,6 +28,8 @@ fun AppointmentCard(
     onCancelClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
+    val timeFormatter = SimpleDateFormat("hh:mm a", Locale("es", "ES"))
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -111,7 +115,7 @@ fun AppointmentCard(
                         color = Color(0xFF1F2937)
                     )
                     Text(
-                        text = appointment.doctor.specialty,
+                        text = appointment.doctor.specialty.displayName,
                         fontSize = 14.sp,
                         color = Color(0xFF6B7280)
                     )
@@ -132,7 +136,7 @@ fun AppointmentCard(
                         color = Color(0xFF6B7280)
                     )
                     Text(
-                        text = appointment.date,
+                        text = dateFormatter.format(appointment.date),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF1F2937)
@@ -146,7 +150,7 @@ fun AppointmentCard(
                         color = Color(0xFF6B7280)
                     )
                     Text(
-                        text = appointment.time,
+                        text = timeFormatter.format(appointment.date),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF1F2937)

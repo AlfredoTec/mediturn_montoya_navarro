@@ -39,8 +39,7 @@ class BookingViewModel : ViewModel() {
     fun onTimeSlotSelected(timeSlot: TimeSlot) {
         _uiState.value = _uiState.value.copy(
             selectedTimeSlot = timeSlot,
-            selectedDate = timeSlot.date,
-            selectedTime = timeSlot.time
+            selectedDate = timeSlot.dateTime.toString(),
         )
     }
 
@@ -59,8 +58,7 @@ class BookingViewModel : ViewModel() {
         val newAppointment = Appointment(
             id = "apt_${System.currentTimeMillis()}",
             doctor = doctor,
-            date = timeSlot.date,
-            time = timeSlot.time,
+            date = timeSlot.dateTime,
             consultationType = _uiState.value.consultationType,
             reason = _uiState.value.reason,
             status = AppointmentStatus.CONFIRMED

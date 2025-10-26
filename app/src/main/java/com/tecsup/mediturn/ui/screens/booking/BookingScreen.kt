@@ -86,7 +86,7 @@ fun BookingScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = doctor.specialty,
+                                text = doctor.specialty.displayName,
                                 color = Color(0xFF6B7280)
                             )
                         }
@@ -148,8 +148,7 @@ fun BookingScreen(
                         ) {
                             items(slots) { slot ->
                                 TimeSlotButton(
-                                    time = slot.time,
-                                    date = slot.date,
+                                    date = slot.dateTime,
                                     isSelected = uiState.selectedTimeSlot == slot,
                                     isAvailable = slot.isAvailable,
                                     onClick = { viewModel.onTimeSlotSelected(slot) }

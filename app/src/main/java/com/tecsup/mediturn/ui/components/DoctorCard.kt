@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecsup.mediturn.data.model.Doctor
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun DoctorCard(
@@ -25,6 +27,10 @@ fun DoctorCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // 🔹 Formateador de fecha y hora
+    val dateFormatter = SimpleDateFormat("EEE dd MMM, hh:mm a", Locale("es", "PE"))
+    val formattedDate = dateFormatter.format(doctor.nextAvailableSlot)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -41,7 +47,7 @@ fun DoctorCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Avatar
+            // 🩺 Avatar circular del doctor
             Box(
                 modifier = Modifier
                     .size(80.dp)
@@ -57,14 +63,14 @@ fun DoctorCard(
                 )
             }
 
-            // Info
+            // 🧠 Información principal del doctor
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = 4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                // Name
+                // Nombre del doctor
                 Text(
                     text = doctor.name,
                     fontSize = 16.sp,
@@ -72,51 +78,27 @@ fun DoctorCard(
                     color = Color(0xFF1F2937)
                 )
 
-                // Specialty
+                // Especialidad
                 Text(
-                    text = doctor.specialty,
+                    text = doctor.specialty.displayName,
                     fontSize = 14.sp,
                     color = Color(0xFF6B7280)
                 )
 
-                // Rating
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFBBF24),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = "${doctor.rating}",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1F2937)
-                    )
-                    Text(
-                        text = "(${doctor.reviewCount})",
-                        fontSize = 12.sp,
-                        color = Color(0xFF9CA3AF)
-                    )
-                }
-
-                // Next Available
+                // 📅 Próxima disponibilidad (formateada)
                 Text(
-                    text = "🕐 ${doctor.nextAvailableSlot}",
+                    text = "🕐 Próx. disponible: $formattedDate",
                     fontSize = 12.sp,
                     color = Color(0xFF10B981)
                 )
 
-                // Price & Telehealth
+                // 💰 Precio y teleconsulta
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "S/ ${doctor.pricePerConsultation.toInt()}",
+                        text = "S/ ${doctor.pricePerConsultation}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF2563EB)

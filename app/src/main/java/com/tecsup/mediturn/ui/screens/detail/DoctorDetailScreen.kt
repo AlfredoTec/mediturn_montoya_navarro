@@ -105,7 +105,7 @@ fun DoctorDetailScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = doctor.specialty,
+                                text = doctor.specialty.displayName,
                                 fontSize = 16.sp,
                                 color = Color(0xFF6B7280)
                             )
@@ -118,8 +118,6 @@ fun DoctorDetailScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            StatItem("⭐", "${doctor.rating}", "Rating")
-                            StatItem("👥", "${doctor.reviewCount}", "Reseñas")
                             StatItem("📅", doctor.experience, "Experiencia")
                         }
                     }

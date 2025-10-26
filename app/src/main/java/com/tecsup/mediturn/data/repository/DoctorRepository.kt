@@ -1,7 +1,7 @@
 package com.tecsup.mediturn.data.repository
 
-import com.tecsup.mediturn.data.local.SampleData
 import com.tecsup.mediturn.data.model.Doctor
+import com.tecsup.mediturn.data.model.SampleData
 
 class DoctorRepository {
 
@@ -16,7 +16,7 @@ class DoctorRepository {
      * Obtiene un doctor por ID
      */
     fun getDoctorById(id: String): Doctor? {
-        return SampleData.sampleDoctors.find { it?.id == id }
+        return SampleData.sampleDoctors.find { it.id == id }
     }
 
     /**
@@ -25,7 +25,7 @@ class DoctorRepository {
     fun searchBySpecialty(specialty: String): List<Doctor> {
         if (specialty == "Todos") return getAllDoctors()
         return SampleData.sampleDoctors.filter {
-            it.specialty.equals(specialty, ignoreCase = true)
+            it.specialty.displayName.equals(specialty, ignoreCase = true)
         }
     }
 

@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,6 +26,7 @@ fun ProfileScreen(
     onNavigateBack: () -> Unit,
     viewModel: ProfileViewModel = viewModel()
 ) {
+    val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -81,16 +84,7 @@ fun ProfileScreen(
 
             item { ProfileInfoCard(Icons.Default.Email, "Email", uiState.patient.email, uiState.isEditing) }
             item { ProfileInfoCard(Icons.Default.Phone, "Teléfono", uiState.patient.phone.ifEmpty { "No registrado" }, uiState.isEditing) }
-            item { ProfileInfoCard(Icons.Default.CalendarToday, "Fecha Nacimiento", uiState.patient.dateOfBirth.ifEmpty { "No registrado" }, uiState.isEditing) }
-
-            // Settings
-            item {
-                Text("Configuración", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-            }
-
-            item { SettingsOption(Icons.Default.Notifications, "Notificaciones", "Gestionar recordatorios") }
-            item { SettingsOption(Icons.Default.Lock, "Privacidad", "Configuración de privacidad") }
-            item { SettingsOption(Icons.Default.Info, "Acerca de", "MediTurn v1.0") }
+            item { ProfileInfoCard(Icons.Default.CalendarToday, "Fecha Nacimiento", dateFormatter.format(uiState.patient.dateOfBirth).ifEmpty { "No registrado" }, uiState.isEditing) }
         }
     }
 }

@@ -44,7 +44,7 @@ class SearchViewModel : ViewModel() {
             val matchesSearch = _uiState.value.searchQuery.isEmpty() ||
                     doctor.name.contains(_uiState.value.searchQuery, ignoreCase = true)
             val matchesFilter = _uiState.value.selectedFilter == "Todos" ||
-                    doctor.specialty == _uiState.value.selectedFilter
+                    doctor.specialty.displayName == _uiState.value.selectedFilter
             matchesSearch && matchesFilter
         }
         _uiState.value = _uiState.value.copy(doctors = filtered)

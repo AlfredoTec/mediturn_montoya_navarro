@@ -1,149 +1,146 @@
-package com.tecsup.mediturn.data.local
+package com.tecsup.mediturn.data.model
 
-import com.tecsup.mediturn.data.model.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 object SampleData {
 
-//Paciente
+    // Formatos de fecha y hora
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    private val birthDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+    // Paciente
     val currentPatient = Patient(
         id = "1",
         name = "Aldy Montoya",
         email = "aldy.montoya@gmail.com",
         phone = "+51 987 654 321",
-        dateOfBirth = "15/03/2006"
+        dateOfBirth = birthDateFormat.parse("15/03/2006")!!
     )
 
-// Time Slots
+    // Time Slots
     val sampleTimeSlots = listOf(
-        TimeSlot("slot_1", "09:00", "Lun 27 Ene", true),
-        TimeSlot("slot_2", "10:30", "Lun 27 Ene", true),
-        TimeSlot("slot_3", "14:00", "Lun 27 Ene", true),
-        TimeSlot("slot_4", "16:30", "Lun 27 Ene", true),
-        TimeSlot("slot_5", "09:00", "Mar 28 Ene", true),
-        TimeSlot("slot_6", "11:00", "Mar 28 Ene", true),
-        TimeSlot("slot_7", "15:00", "Mar 28 Ene", true),
-        TimeSlot("slot_8", "09:30", "Mié 29 Ene", true),
-        TimeSlot("slot_9", "13:00", "Mié 29 Ene", true),
-        TimeSlot("slot_10", "16:00", "Mié 29 Ene", true)
+        TimeSlot("slot_1", dateFormat.parse("27/01/2025 09:00")!!),
+        TimeSlot("slot_2", dateFormat.parse("27/01/2025 10:30")!!),
+        TimeSlot("slot_3", dateFormat.parse("27/01/2025 14:00")!!),
+        TimeSlot("slot_4", dateFormat.parse("27/01/2025 16:30")!!),
+        TimeSlot("slot_5", dateFormat.parse("28/01/2025 09:00")!!),
+        TimeSlot("slot_6", dateFormat.parse("28/01/2025 11:00")!!),
+        TimeSlot("slot_7", dateFormat.parse("28/01/2025 15:00")!!),
+        TimeSlot("slot_8", dateFormat.parse("29/01/2025 09:30")!!),
+        TimeSlot("slot_9", dateFormat.parse("29/01/2025 13:00")!!),
+        TimeSlot("slot_10", dateFormat.parse("29/01/2025 16:00")!!)
     )
 
-    //Doctores
-
+    // Doctores (specialty -> enum)
     val sampleDoctors = listOf(
         Doctor(
             id = "doc_1",
             name = "Dra. María González",
-            specialty = "Cardiología",
-            rating = 4.9,
-            reviewCount = 127,
+            specialty = Specialty.CARDIOLOGY,
             experience = "15 años",
-            nextAvailableSlot = "Hoy 3:00 PM",
+            nextAvailableSlot = Date(System.currentTimeMillis() + 2 * 60 * 60 * 1000), // Hoy +2 horas
             pricePerConsultation = 120.0,
             isTelehealthAvailable = true,
             location = "Clínica San Pablo, Surco",
-            about = "Especialista en cardiología con amplia experiencia en el diagnóstico y tratamiento de enfermedades cardiovasculares. Certificada por la Sociedad Peruana de Cardiología.",
+            about = "Especialista en cardiología con amplia experiencia en el diagnóstico y tratamiento de enfermedades cardiovasculares.",
             availableTimeSlots = sampleTimeSlots
         ),
         Doctor(
             id = "doc_2",
             name = "Dr. Carlos Ramírez",
-            specialty = "Medicina General",
-            rating = 4.7,
-            reviewCount = 89,
+            specialty = Specialty.GENERAL_MEDICINE,
             experience = "10 años",
-            nextAvailableSlot = "Mañana 10:00 AM",
+            nextAvailableSlot = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000 + 10 * 60 * 60 * 1000), // Mañana 10 AM aprox
             pricePerConsultation = 80.0,
             isTelehealthAvailable = true,
             location = "Clínica Ricardo Palma, San Isidro",
-            about = "Médico general con enfoque en medicina preventiva y atención primaria. Especializado en el manejo integral de pacientes adultos.",
+            about = "Médico general con enfoque en medicina preventiva y atención primaria.",
             availableTimeSlots = sampleTimeSlots
         ),
         Doctor(
             id = "doc_3",
             name = "Dra. Ana Morales",
-            specialty = "Pediatría",
-            rating = 4.8,
-            reviewCount = 156,
+            specialty = Specialty.PEDIATRICS,
             experience = "12 años",
-            nextAvailableSlot = "Hoy 5:00 PM",
+            nextAvailableSlot = Date(System.currentTimeMillis() + 5 * 60 * 60 * 1000), // Hoy +5 horas
             pricePerConsultation = 100.0,
             isTelehealthAvailable = false,
             location = "Hospital Rebagliati, Jesús María",
-            about = "Pediatra especializada en el cuidado integral de niños y adolescentes. Experta en vacunación y control de crecimiento y desarrollo.",
+            about = "Pediatra especializada en el cuidado integral de niños y adolescentes.",
             availableTimeSlots = sampleTimeSlots
         ),
         Doctor(
             id = "doc_4",
             name = "Dr. Luis Torres",
-            specialty = "Dermatología",
-            rating = 4.6,
-            reviewCount = 73,
+            specialty = Specialty.DERMATOLOGY,
             experience = "8 años",
-            nextAvailableSlot = "Jue 30 Ene 11:00 AM",
+            nextAvailableSlot = Date(System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000 + 11 * 60 * 60 * 1000), // Jueves 11 AM aprox
             pricePerConsultation = 110.0,
             isTelehealthAvailable = true,
             location = "Dermacentro, Miraflores",
-            about = "Dermatólogo especializado en dermatología clínica y estética. Tratamiento de acné, manchas y envejecimiento cutáneo.",
+            about = "Dermatólogo especializado en dermatología clínica y estética.",
             availableTimeSlots = sampleTimeSlots
         ),
         Doctor(
             id = "doc_5",
             name = "Dra. Patricia Vega",
-            specialty = "Neurología",
-            rating = 4.9,
-            reviewCount = 98,
+            specialty = Specialty.NEUROLOGY,
             experience = "18 años",
-            nextAvailableSlot = "Vie 31 Ene 2:00 PM",
+            nextAvailableSlot = Date(System.currentTimeMillis() + 6 * 24 * 60 * 60 * 1000 + 14 * 60 * 60 * 1000), // Viernes 2 PM aprox
             pricePerConsultation = 150.0,
             isTelehealthAvailable = false,
             location = "Clínica Anglo Americana, San Isidro",
-            about = "Neuróloga con subespecialidad en cefaleas y trastornos del movimiento. Amplia experiencia en diagnóstico neurológico.",
+            about = "Neuróloga con subespecialidad en cefaleas y trastornos del movimiento.",
             availableTimeSlots = sampleTimeSlots
         ),
         Doctor(
             id = "doc_6",
             name = "Dr. Roberto Flores",
-            specialty = "Traumatología",
-            rating = 4.7,
-            reviewCount = 112,
+            specialty = Specialty.ORTHOPEDICS,
             experience = "14 años",
-            nextAvailableSlot = "Lun 27 Ene 4:00 PM",
+            nextAvailableSlot = Date(System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000 + 16 * 60 * 60 * 1000), // Lunes 4 PM aprox
             pricePerConsultation = 130.0,
             isTelehealthAvailable = false,
             location = "Clínica San Felipe, Jesús María",
-            about = "Traumatólogo y cirujano ortopédico. Especialista en lesiones deportivas y cirugía artroscópica de rodilla y hombro.",
+            about = "Traumatólogo especializado en lesiones deportivas y cirugía artroscópica.",
             availableTimeSlots = sampleTimeSlots
         )
     )
 
-// Citas
+    // Citas (Appointment con Date)
     val sampleAppointments = listOf(
         Appointment(
             id = "apt_1",
-            doctor = sampleDoctors[0], // Dra. María González
-            date = "Lun 27 Ene",
-            time = "3:00 PM",
+            doctor = sampleDoctors[0],
+            date = dateFormat.parse("27/10/2025 15:00")!!,  // Lun 27 Oct 3:00 PM
             consultationType = ConsultationType.TELEHEALTH,
             reason = "Control de presión arterial",
             status = AppointmentStatus.CONFIRMED
         ),
         Appointment(
             id = "apt_2",
-            doctor = sampleDoctors[1], // Dr. Carlos Ramírez
-            date = "Mié 29 Ene",
-            time = "10:00 AM",
+            doctor = sampleDoctors[1],
+            date = dateFormat.parse("29/10/2025 10:00")!!,  // Mié 29 Oct 10:00 AM
             consultationType = ConsultationType.IN_PERSON,
             reason = "Chequeo general anual",
             status = AppointmentStatus.CONFIRMED
         ),
         Appointment(
             id = "apt_3",
-            doctor = sampleDoctors[2], // Dra. Ana Morales
-            date = "Vie 31 Ene",
-            time = "5:00 PM",
+            doctor = sampleDoctors[2],
+            date = dateFormat.parse("25/10/2025 20:00")!!,  // Sab 25 Oct 8:00 PM
             consultationType = ConsultationType.IN_PERSON,
             reason = "Control pediátrico mensual",
             status = AppointmentStatus.PENDING
+        ),
+        Appointment(
+            id = "apt_4",
+            doctor = sampleDoctors[0],
+            date = dateFormat.parse("20/09/2025 12:00")!!,  // Sab 20 Sep 12:00 PM
+            consultationType = ConsultationType.TELEHEALTH,
+            reason = "Control de presión arterial",
+            status = AppointmentStatus.COMPLETED
         )
     )
 }

@@ -1,14 +1,14 @@
 package com.tecsup.mediturn.data.model
 
+import java.util.Date
 
+// Clase que representa a los doctores
 data class Doctor(
     val id: String,
     val name: String,
-    val specialty: String,
-    val rating: Double,
-    val reviewCount: Int,
+    val specialty: Specialty,
     val experience: String,
-    val nextAvailableSlot: String,
+    val nextAvailableSlot: Date,
     val pricePerConsultation: Double,
     val imageUrl: String = "",
     val isTelehealthAvailable: Boolean = false,

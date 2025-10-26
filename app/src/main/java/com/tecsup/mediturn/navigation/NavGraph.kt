@@ -14,6 +14,7 @@ import com.tecsup.mediturn.ui.screens.appointments.AppointmentsScreen
 import com.tecsup.mediturn.ui.screens.profile.ProfileScreen
 import com.tecsup.mediturn.ui.screens.confirmation.ConfirmationScreen
 
+// Se encarga de de la navegación
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(
@@ -23,12 +24,19 @@ fun NavGraph(navController: NavHostController) {
         // Home
         composable(Routes.Home.route) {
             HomeScreen(
+                // Navegación: Pantalla de busqueda
                 onSearchClick = { navController.navigate(Routes.Search.route) },
-                onDoctorClick = { doctorId ->
-                    navController.navigate(Routes.DoctorDetail.createRoute(doctorId))
-                },
+
+                // Navegación: Pantalla de detalle del doctor
+                onDoctorClick = { doctorId -> navController.navigate(Routes.DoctorDetail.createRoute(doctorId)) },
+
+                // Navegación: Pantalla de agendar cita
                 onAppointmentsClick = { navController.navigate(Routes.Appointments.route) },
+
+                // Navegación: Pantalla de perfil
                 onProfileClick = { navController.navigate(Routes.Profile.route) },
+
+                // Navegación: Pantalla de inicio de sesión
                 onSpecialtyClick = { navController.navigate(Routes.Search.route) }
             )
         }
@@ -36,10 +44,11 @@ fun NavGraph(navController: NavHostController) {
         // Search
         composable(Routes.Search.route) {
             SearchScreen(
+                // Navegación: Pantalla de inicio
                 onNavigateBack = { navController.popBackStack() },
-                onDoctorClick = { doctorId ->
-                    navController.navigate(Routes.DoctorDetail.createRoute(doctorId))
-                }
+
+                // Navegación: Pantalla de detalle del doctor
+                onDoctorClick = { doctorId -> navController.navigate(Routes.DoctorDetail.createRoute(doctorId)) }
             )
         }
 
@@ -76,6 +85,7 @@ fun NavGraph(navController: NavHostController) {
         // Appointments
         composable(Routes.Appointments.route) {
             AppointmentsScreen(
+                // Navegación: Pantalla de inicio
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -83,6 +93,7 @@ fun NavGraph(navController: NavHostController) {
         // Profile
         composable(Routes.Profile.route) {
             ProfileScreen(
+                // Navegación: Pantalla de inicio
                 onNavigateBack = { navController.popBackStack() }
             )
         }
