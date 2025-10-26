@@ -44,6 +44,9 @@ android {
 }
 
 dependencies {
+    // === DataStore: Para almacenar el theme ===
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+
     // ===== Room (Base de datos local) =====
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")

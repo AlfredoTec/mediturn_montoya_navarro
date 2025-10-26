@@ -5,28 +5,46 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.tecsup.mediturn.data.ThemePreferenceManager
 import com.tecsup.mediturn.navigation.NavGraph
 import com.tecsup.mediturn.ui.theme.MediTurnTheme
+import com.tecsup.mediturn.ui.theme.ThemeViewModel
+import com.tecsup.mediturn.ui.theme.ThemeViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val prefs = ThemePreferenceManager(this)
+
         setContent {
-            MediTurnTheme {
+            val themeViewModel: ThemeViewModel = viewModel(
+                factory = ThemeViewModelFactory(prefs)
+            )
+
+            val isDarkMode by themeViewModel.isDarkMode.collectAsState()
+
+            MediTurnTheme(darkTheme = isDarkMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    NavGraph(navController = navController)
+
+                    NavGraph(
+                        navController = navController,
+                        isDarkMode = isDarkMode,
+                        onToggleTheme = { themeViewModel.toggleTheme() }
+                    )
                 }
             }
         }
-
     }
 }

@@ -10,10 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.mediturn.data.model.SampleData
 import com.tecsup.mediturn.ui.components.DoctorCard
@@ -25,40 +22,65 @@ fun HomeScreen(
     onDoctorClick: (String) -> Unit,
     onAppointmentsClick: () -> Unit,
     onProfileClick: () -> Unit,
-    onSpecialtyClick: (String) -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
     val patient = SampleData.currentPatient
     val uiState by viewModel.uiState.collectAsState()
+
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text("Bienvenido", fontSize = 14.sp, color = Color(0xFF6B7280))
-                        Text(patient.name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Bienvenido",
+                            style = typography.bodySmall,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            patient.name,
+                            style = typography.titleMedium,
+                            color = colorScheme.onSurface
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = onProfileClick) {
-                        Icon(Icons.Default.Person, "Perfil", tint = Color(0xFF2563EB))
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = "Perfil",
+                            tint = colorScheme.primary
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorScheme.surface
+                )
             )
-        }
+        },
+        containerColor = colorScheme.background
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             item { SearchBarSection(onSearchClick) }
             item { QuickActionsSection(onSearchClick, onAppointmentsClick) }
+
             item {
-                Text("Doctores Destacados", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Doctores Destacados",
+                    style = typography.titleMedium,
+                    color = colorScheme.onSurface
+                )
             }
+
             items(uiState.featuredDoctors) { doctor ->
                 DoctorCard(doctor = doctor, onClick = { onDoctorClick(doctor.id) })
             }
@@ -69,19 +91,34 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchBarSection(onSearchClick: () -> Unit) {
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF3F4F6)),
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surfaceVariant
+        ),
         onClick = onSearchClick
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(Icons.Default.Search, null, tint = Color(0xFF9CA3AF))
-            Text("Buscar médico, especialidad...", fontSize = 16.sp, color = Color(0xFF6B7280))
+            Icon(
+                Icons.Default.Search,
+                contentDescription = null,
+                tint = colorScheme.onSurfaceVariant
+            )
+            Text(
+                "Buscar médico, especialidad...",
+                style = typography.bodyMedium,
+                color = colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -98,14 +135,14 @@ private fun QuickActionsSection(
         QuickActionCard(
             icon = Icons.Default.Search,
             title = "Buscar Doctor",
-            color = Color(0xFF2563EB),
+            color = MaterialTheme.colorScheme.primary,
             onClick = onSearchClick,
             modifier = Modifier.weight(1f)
         )
         QuickActionCard(
             icon = Icons.Default.CalendarMonth,
             title = "Mis Citas",
-            color = Color(0xFF10B981),
+            color = MaterialTheme.colorScheme.tertiary,
             onClick = onAppointmentsClick,
             modifier = Modifier.weight(1f)
         )
@@ -117,10 +154,12 @@ private fun QuickActionsSection(
 private fun QuickActionCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
-    color: Color,
+    color: androidx.compose.ui.graphics.Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val typography = MaterialTheme.typography
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -128,12 +167,18 @@ private fun QuickActionCard(
         onClick = onClick
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(icon, null, tint = Color.White, modifier = Modifier.size(32.dp))
-            Text(title, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+            Icon(icon, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(32.dp))
+            Text(
+                title,
+                style = typography.labelLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }

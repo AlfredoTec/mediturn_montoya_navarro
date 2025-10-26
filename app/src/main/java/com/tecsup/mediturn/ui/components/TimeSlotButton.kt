@@ -4,20 +4,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.tecsup.mediturn.ui.theme.MediTurnTheme
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 @Composable
 fun TimeSlotButton(
@@ -27,23 +22,42 @@ fun TimeSlotButton(
     isAvailable: Boolean = true,
     onClick: () -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
     val timeFormatter = SimpleDateFormat("hh:mm a", Locale("es", "ES"))
+
+    val containerColor = when {
+        !isAvailable -> colors.surfaceVariant
+        isSelected -> colors.primary
+        else -> colors.surface
+    }
+
+    val borderColor = when {
+        !isAvailable -> colors.outlineVariant
+        else -> colors.outline
+    }
+
+    val dateTextColor = when {
+        !isAvailable -> colors.outlineVariant
+        isSelected -> colors.onPrimary.copy(alpha = 0.9f)
+        else -> colors.onSurfaceVariant
+    }
+
+    val timeTextColor = when {
+        !isAvailable -> colors.outlineVariant
+        isSelected -> colors.onPrimary
+        else -> colors.onSurface
+    }
+
     Card(
         modifier = modifier
-            .width(110.dp)
+            .width(120.dp)
             .clickable(enabled = isAvailable, onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = when {
-                !isAvailable -> Color(0xFFF3F4F6)
-                isSelected -> Color(0xFF2563EB)
-                else -> Color.White
-            }
-        ),
-        border = if (!isSelected && isAvailable) {
-            BorderStroke(1.dp, Color(0xFFE5E7EB))
-        } else null,
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        border = if (!isSelected && isAvailable) BorderStroke(1.dp, borderColor) else null,
         elevation = CardDefaults.cardElevation(
             defaultElevation = if (isSelected) 4.dp else 0.dp
         )
@@ -55,28 +69,14 @@ fun TimeSlotButton(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // Fecha
             Text(
                 text = dateFormatter.format(date),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = when {
-                    !isAvailable -> Color(0xFF9CA3AF)
-                    isSelected -> Color.White.copy(alpha = 0.9f)
-                    else -> Color(0xFF6B7280)
-                }
+                style = typography.labelSmall.copy(color = dateTextColor)
             )
 
-            // Hora
             Text(
                 text = timeFormatter.format(date),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = when {
-                    !isAvailable -> Color(0xFF9CA3AF)
-                    isSelected -> Color.White
-                    else -> Color(0xFF1F2937)
-                }
+                style = typography.titleMedium.copy(color = timeTextColor)
             )
         }
     }

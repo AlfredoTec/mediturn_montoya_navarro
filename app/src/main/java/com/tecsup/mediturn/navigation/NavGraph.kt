@@ -16,7 +16,11 @@ import com.tecsup.mediturn.ui.screens.confirmation.ConfirmationScreen
 
 // Se encarga de de la navegación
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(
+    navController: NavHostController,
+    isDarkMode: Boolean,
+    onToggleTheme: () -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = Routes.Home.route
@@ -35,9 +39,6 @@ fun NavGraph(navController: NavHostController) {
 
                 // Navegación: Pantalla de perfil
                 onProfileClick = { navController.navigate(Routes.Profile.route) },
-
-                // Navegación: Pantalla de inicio de sesión
-                onSpecialtyClick = { navController.navigate(Routes.Search.route) }
             )
         }
 
@@ -94,7 +95,9 @@ fun NavGraph(navController: NavHostController) {
         composable(Routes.Profile.route) {
             ProfileScreen(
                 // Navegación: Pantalla de inicio
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                isDarkMode = isDarkMode,
+                onToggleTheme = onToggleTheme
             )
         }
 

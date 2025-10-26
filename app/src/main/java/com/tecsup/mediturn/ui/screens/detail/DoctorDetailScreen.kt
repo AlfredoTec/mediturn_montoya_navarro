@@ -12,10 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,46 +28,74 @@ fun DoctorDetailScreen(
     }
 
     val uiState by viewModel.uiState.collectAsState()
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalle del Doctor") },
+                title = {
+                    Text(
+                        "Detalle del Doctor",
+                        style = typography.titleLarge.copy(color = colorScheme.onPrimary)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Volver")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = colorScheme.onPrimary
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorScheme.primary
+                )
             )
         },
         bottomBar = {
             if (uiState.doctor != null) {
-                Surface(shadowElevation = 8.dp) {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = colorScheme.surface
+                ) {
                     Button(
                         onClick = { onBookAppointment(doctorId) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorScheme.primary,
+                            contentColor = colorScheme.onPrimary
+                        )
                     ) {
-                        Text("Agendar Cita", modifier = Modifier.padding(8.dp))
+                        Text(
+                            "Agendar Cita",
+                            modifier = Modifier.padding(8.dp),
+                            style = typography.labelLarge
+                        )
                     }
                 }
             }
-        }
+        },
+        containerColor = colorScheme.background
     ) { paddingValues ->
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = colorScheme.primary)
+                }
             }
-        } else {
-            uiState.doctor?.let { doctor ->
+
+            uiState.doctor != null -> {
+                val doctor = uiState.doctor!!
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -78,7 +103,7 @@ fun DoctorDetailScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Header
+                    // 👤 Header
                     item {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -88,79 +113,79 @@ fun DoctorDetailScreen(
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFF2563EB)),
+                                    .background(colorScheme.primary),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = doctor.name.split(" ").map { it.first() }.take(2).joinToString(""),
-                                    fontSize = 36.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    text = doctor.name.split(" ")
+                                        .map { it.first() }
+                                        .take(2)
+                                        .joinToString(""),
+                                    style = typography.headlineSmall,
+                                    color = colorScheme.onPrimary
                                 )
                             }
                             Spacer(Modifier.height(12.dp))
                             Text(
                                 text = doctor.name,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold
+                                style = typography.headlineSmall,
+                                color = colorScheme.onBackground
                             )
                             Text(
                                 text = doctor.specialty.displayName,
-                                fontSize = 16.sp,
-                                color = Color(0xFF6B7280)
+                                style = typography.bodyMedium,
+                                color = colorScheme.onSurfaceVariant
                             )
                         }
                     }
 
-                    // Stats
+                    // 📊 Stats
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            StatItem("📅", doctor.experience, "Experiencia")
+                            StatItem(
+                                emoji = "📅",
+                                value = doctor.experience,
+                                label = "Experiencia",
+                                colorScheme = colorScheme,
+                                typography = typography
+                            )
                         }
                     }
 
-                    // About
+                    // 📖 About
                     item {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Column(Modifier.padding(16.dp)) {
-                                Text(
-                                    text = "Acerca de",
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 16.sp
-                                )
-                                Spacer(Modifier.height(8.dp))
-                                Text(
-                                    text = doctor.about,
-                                    color = Color(0xFF6B7280)
-                                )
-                            }
-                        }
+                        InfoCard(
+                            title = "Acerca de",
+                            content = doctor.about,
+                            colorScheme = colorScheme,
+                            typography = typography
+                        )
                     }
 
-                    // Info
+                    // 📍 Info
                     item {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
+                        InfoCard(
+                            title = "Información",
+                            colorScheme = colorScheme,
+                            typography = typography
                         ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                InfoRow(Icons.Default.LocationOn, doctor.location)
+                            InfoRow(Icons.Default.LocationOn, doctor.location, colorScheme, typography)
+                            InfoRow(
+                                Icons.Default.Star,
+                                "S/ ${doctor.pricePerConsultation.toInt()} por consulta",
+                                colorScheme,
+                                typography
+                            )
+                            if (doctor.isTelehealthAvailable) {
                                 InfoRow(
-                                    Icons.Default.Star,
-                                    "S/ ${doctor.pricePerConsultation.toInt()} por consulta"
+                                    Icons.Default.VideoCall,
+                                    "Teleconsulta disponible",
+                                    colorScheme,
+                                    typography
                                 )
-                                if (doctor.isTelehealthAvailable) {
-                                    InfoRow(Icons.Default.VideoCall, "Teleconsulta disponible")
-                                }
                             }
                         }
                     }
@@ -171,16 +196,62 @@ fun DoctorDetailScreen(
 }
 
 @Composable
-private fun StatItem(emoji: String, value: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(emoji, fontSize = 24.sp)
-        Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text(label, fontSize = 12.sp, color = Color(0xFF6B7280))
+private fun InfoCard(
+    title: String,
+    content: String? = null,
+    colorScheme: ColorScheme,
+    typography: Typography,
+    contentSlot: (@Composable ColumnScope.() -> Unit)? = null
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surfaceVariant
+        )
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text = title,
+                style = typography.titleMedium,
+                color = colorScheme.onSurface
+            )
+            Spacer(Modifier.height(8.dp))
+            if (content != null) {
+                Text(
+                    text = content,
+                    style = typography.bodyMedium,
+                    color = colorScheme.onSurfaceVariant
+                )
+            } else {
+                contentSlot?.invoke(this)
+            }
+        }
     }
 }
 
 @Composable
-private fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String) {
+private fun StatItem(
+    emoji: String,
+    value: String,
+    label: String,
+    colorScheme: ColorScheme,
+    typography: Typography
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(emoji, style = typography.headlineSmall)
+        Text(value, style = typography.bodyLarge, color = colorScheme.onBackground)
+        Text(label, style = typography.bodySmall, color = colorScheme.onSurfaceVariant)
+    }
+}
+
+@Composable
+private fun InfoRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String,
+    colorScheme: ColorScheme,
+    typography: Typography
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -189,8 +260,12 @@ private fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, text:
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = Color(0xFF2563EB)
+            tint = colorScheme.primary
         )
-        Text(text = text, fontSize = 14.sp)
+        Text(
+            text = text,
+            style = typography.bodyMedium,
+            color = colorScheme.onSurface
+        )
     }
 }

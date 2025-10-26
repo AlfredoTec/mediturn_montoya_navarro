@@ -9,8 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,51 +25,93 @@ fun SearchScreen(
     viewModel: SearchViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Buscar Doctores") },
+                title = {
+                    Text(
+                        "Buscar Doctores",
+                        style = typography.titleLarge.copy(color = colors.onSurface)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Volver")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = colors.onSurface
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colors.surface
+                )
             )
-        }
+        },
+        containerColor = colors.background
     ) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            // Search Bar
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+        ) {
+            // 🔍 Search Bar
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = { viewModel.onSearchQueryChange(it) },
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                placeholder = { Text("Buscar por nombre...") },
-                leadingIcon = { Icon(Icons.Default.Search, null) },
-                shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Buscar por nombre...", color = colors.onSurfaceVariant) },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = null, tint = colors.primary)
+                },
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = colors.primary,
+                    unfocusedBorderColor = colors.outline,
+                    cursorColor = colors.primary,
+                    focusedContainerColor = colors.surface,
+                    unfocusedContainerColor = colors.surface
+                )
             )
 
-            // Filters
-            FilterSection(uiState.selectedFilter) { viewModel.onFilterSelected(it) }
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Results
+            // 🩺 Filters
+            FilterSection(
+                selectedFilter = uiState.selectedFilter,
+                onFilterSelected = { viewModel.onFilterSelected(it) }
+            )
+
+            // 📋 Results
             LazyColumn(
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (uiState.doctors.isEmpty()) {
                     item {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(32.dp),
-                            contentAlignment = androidx.compose.ui.Alignment.Center
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text("No se encontraron doctores", color = Color.Gray)
+                            Text(
+                                "No se encontraron doctores",
+                                color = colors.onSurfaceVariant,
+                                style = typography.bodyMedium
+                            )
                         }
                     }
                 } else {
                     items(uiState.doctors) { doctor ->
-                        DoctorCard(doctor = doctor, onClick = { onDoctorClick(doctor.id) })
+                        DoctorCard(
+                            doctor = doctor,
+                            onClick = { onDoctorClick(doctor.id) }
+                        )
                     }
                 }
             }
@@ -86,16 +128,20 @@ private fun FilterSection(
         "Todos", "Medicina General", "Cardiología",
         "Pediatría", "Dermatología", "Neurología", "Traumatología"
     )
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
 
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(filters) { filter ->
             FilterChip(
                 filter = filter,
                 isSelected = selectedFilter == filter,
-                onClick = { onFilterSelected(filter) }
+                onClick = { onFilterSelected(filter) },
+                colors = colors,
+                typography = typography
             )
         }
     }
@@ -103,20 +149,26 @@ private fun FilterSection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FilterChip(filter: String, isSelected: Boolean, onClick: () -> Unit) {
+private fun FilterChip(
+    filter: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    colors: ColorScheme,
+    typography: Typography
+) {
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFF2563EB) else Color(0xFFF3F4F6)
+            containerColor = if (isSelected) colors.primary else colors.surfaceVariant
         )
     ) {
         Text(
             text = filter,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = if (isSelected) Color.White else Color(0xFF374151)
+            style = typography.labelLarge.copy(
+                color = if (isSelected) colors.onPrimary else colors.onSurface
+            )
         )
     }
 }

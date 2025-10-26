@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,34 +23,43 @@ import java.util.Locale
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
+    isDarkMode: Boolean,
+    onToggleTheme: () -> Unit,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
     val uiState by viewModel.uiState.collectAsState()
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mi Perfil") },
+                title = { Text("Mi Perfil", color = colors.onSurface) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Volver")
+                        Icon(Icons.Default.ArrowBack, "Volver", tint = colors.onSurfaceVariant)
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.toggleEditMode() }) {
                         Icon(
                             if (uiState.isEditing) Icons.Default.Check else Icons.Default.Edit,
-                            if (uiState.isEditing) "Guardar" else "Editar"
+                            if (uiState.isEditing) "Guardar" else "Editar",
+                            tint = colors.primary
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colors.surface
+                )
             )
         }
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
@@ -63,28 +71,94 @@ fun ProfileScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Box(
-                        modifier = Modifier.size(100.dp).clip(CircleShape).background(Color(0xFF2563EB)),
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .background(colors.primary),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = uiState.patient.name.split(" ").map { it.first() }.take(2).joinToString(""),
+                            text = uiState.patient.name.split(" ")
+                                .map { it.first() }
+                                .take(2)
+                                .joinToString(""),
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = colors.onPrimary
                         )
                     }
-                    Text(uiState.patient.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        uiState.patient.name,
+                        style = typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = colors.onSurface
+                    )
                 }
             }
 
             // Personal Info
             item {
-                Text("Información Personal", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Información Personal",
+                    style = typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = colors.onSurface
+                )
             }
 
-            item { ProfileInfoCard(Icons.Default.Email, "Email", uiState.patient.email, uiState.isEditing) }
-            item { ProfileInfoCard(Icons.Default.Phone, "Teléfono", uiState.patient.phone.ifEmpty { "No registrado" }, uiState.isEditing) }
-            item { ProfileInfoCard(Icons.Default.CalendarToday, "Fecha Nacimiento", dateFormatter.format(uiState.patient.dateOfBirth).ifEmpty { "No registrado" }, uiState.isEditing) }
+            item {
+                ProfileInfoCard(
+                    Icons.Default.Email,
+                    "Email",
+                    uiState.patient.email,
+                    uiState.isEditing
+                )
+            }
+
+            item {
+                ProfileInfoCard(
+                    Icons.Default.Phone,
+                    "Teléfono",
+                    uiState.patient.phone.ifEmpty { "No registrado" },
+                    uiState.isEditing
+                )
+            }
+
+            item {
+                ProfileInfoCard(
+                    Icons.Default.CalendarToday,
+                    "Fecha Nacimiento",
+                    dateFormatter.format(uiState.patient.dateOfBirth)
+                        .ifEmpty { "No registrado" },
+                    uiState.isEditing
+                )
+            }
+
+            // Settings section
+            item {
+                Text(
+                    "Configuración",
+                    style = typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = colors.onSurface
+                )
+            }
+
+            // Tema oscuro/claro
+            item {
+                SettingsOption(
+                    icon = Icons.Default.DarkMode,
+                    title = "Modo oscuro",
+                    subtitle = if (isDarkMode) "Activado" else "Desactivado",
+                    trailingContent = {
+                        Switch(
+                            checked = isDarkMode,
+                            onCheckedChange = { onToggleTheme() },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = colors.surface,
+                                checkedTrackColor = colors.secondary
+                            )
+                        )
+                    }
+                )
+            }
         }
     }
 }
@@ -96,19 +170,24 @@ private fun ProfileInfoCard(
     value: String,
     isEditing: Boolean
 ) {
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB))
+        colors = CardDefaults.cardColors(containerColor = colors.surface)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, null, modifier = Modifier.size(24.dp), tint = Color(0xFF2563EB))
+            Icon(icon, null, modifier = Modifier.size(24.dp), tint = colors.onSurfaceVariant)
             Column(modifier = Modifier.weight(1f)) {
-                Text(label, fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text(label, style = typography.labelSmall, color = colors.onSurfaceVariant)
                 Spacer(Modifier.height(4.dp))
                 if (isEditing) {
                     OutlinedTextField(
@@ -117,12 +196,16 @@ private fun ProfileInfoCard(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2563EB),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                            focusedBorderColor = colors.primary,
+                            unfocusedBorderColor = colors.surfaceVariant
                         )
                     )
                 } else {
-                    Text(value, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        value,
+                        style = typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = colors.onSurface
+                    )
                 }
             }
         }
@@ -134,24 +217,31 @@ private fun ProfileInfoCard(
 private fun SettingsOption(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
-    subtitle: String
+    subtitle: String,
+    trailingContent: @Composable (() -> Unit)? = null
 ) {
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        onClick = {}
+        onClick = {},
+        colors = CardDefaults.cardColors(containerColor = colors.surface)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, null, modifier = Modifier.size(24.dp), tint = Color(0xFF6B7280))
+            Icon(icon, null, modifier = Modifier.size(24.dp), tint = colors.onSurfaceVariant)
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Text(subtitle, fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text(title, style = typography.bodyLarge, color = colors.onSurface)
+                Text(subtitle, style = typography.labelSmall, color = colors.onSurfaceVariant)
             }
-            Icon(Icons.Default.KeyboardArrowRight, null, tint = Color(0xFF9CA3AF))
+            trailingContent?.invoke()
         }
     }
 }

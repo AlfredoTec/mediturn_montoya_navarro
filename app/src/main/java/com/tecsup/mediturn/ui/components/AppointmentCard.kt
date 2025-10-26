@@ -13,9 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.tecsup.mediturn.data.model.Appointment
 import com.tecsup.mediturn.data.model.AppointmentStatus
 import com.tecsup.mediturn.data.model.ConsultationType
@@ -28,13 +28,17 @@ fun AppointmentCard(
     onCancelClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val colors = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
     val timeFormatter = SimpleDateFormat("hh:mm a", Locale("es", "ES"))
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = colors.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -44,87 +48,91 @@ fun AppointmentCard(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // encabezado con estados
+
+            // 🟢 Encabezado con estado y tipo
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // indicador de estado
+                // Indicador de estado
                 Box(
                     modifier = Modifier
                         .size(10.dp)
                         .clip(CircleShape)
                         .background(
                             when (appointment.status) {
-                                AppointmentStatus.CONFIRMED -> Color(0xFF10B981)
-                                AppointmentStatus.PENDING -> Color(0xFFF59E0B)
+                                AppointmentStatus.CONFIRMED -> Color(0xFFB4EC51)
+                                AppointmentStatus.PENDING -> Color(0xFFFFC107)
                                 AppointmentStatus.CANCELLED -> Color(0xFFEF4444)
-                                AppointmentStatus.COMPLETED -> Color(0xFF6B7280)
+                                AppointmentStatus.COMPLETED -> Color(0xFF22C55E)
                             }
                         )
                 )
 
-                // tipo de consulta
+                // Tipo de consulta
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val icon = if (appointment.consultationType == ConsultationType.TELEHEALTH)
+                        Icons.Default.VideoCall else Icons.Default.LocalHospital
                     Icon(
-                        imageVector = if (appointment.consultationType == ConsultationType.TELEHEALTH)
-                            Icons.Default.VideoCall else Icons.Default.LocalHospital,
+                        imageVector = icon,
                         contentDescription = null,
-                        tint = Color(0xFF2563EB),
+                        tint = colors.primary,
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
                         text = if (appointment.consultationType == ConsultationType.TELEHEALTH)
                             "Teleconsulta" else "Presencial",
-                        fontSize = 12.sp,
-                        color = Color(0xFF2563EB)
+                        style = typography.labelSmall.copy(
+                            color = colors.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
                 }
             }
 
-            // informacion de doctor
+            // 👩‍⚕️ Información del doctor
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Avatar
                 Box(
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF2563EB)),
+                        .background(colors.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = appointment.doctor.name.split(" ").map { it.first() }.take(2).joinToString(""),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        text = appointment.doctor.name.split(" ")
+                            .map { it.first() }
+                            .take(2)
+                            .joinToString(""),
+                        style = typography.titleMedium.copy(color = colors.onPrimaryContainer)
                     )
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
                         text = appointment.doctor.name,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1F2937)
+                        style = typography.bodyLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.onSurface
+                        )
                     )
                     Text(
                         text = appointment.doctor.specialty.displayName,
-                        fontSize = 14.sp,
-                        color = Color(0xFF6B7280)
+                        style = typography.bodyMedium.copy(color = colors.onSurfaceVariant)
                     )
                 }
             }
 
-            Divider(color = Color(0xFFE5E7EB))
+            Divider(color = colors.outlineVariant)
 
-            // cita y fecha
+            // 🕒 Fecha y hora
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -132,55 +140,50 @@ fun AppointmentCard(
                 Column {
                     Text(
                         text = "Fecha",
-                        fontSize = 12.sp,
-                        color = Color(0xFF6B7280)
+                        style = typography.labelSmall.copy(color = colors.onSurfaceVariant)
                     )
                     Text(
                         text = dateFormatter.format(appointment.date),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1F2937)
+                        style = typography.bodyMedium.copy(color = colors.onSurface)
                     )
                 }
-
                 Column {
                     Text(
                         text = "Hora",
-                        fontSize = 12.sp,
-                        color = Color(0xFF6B7280)
+                        style = typography.labelSmall.copy(color = colors.onSurfaceVariant)
                     )
                     Text(
                         text = timeFormatter.format(appointment.date),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1F2937)
+                        style = typography.bodyMedium.copy(color = colors.onSurface)
                     )
                 }
             }
 
-            // razon si es viable
+            // 📝 Motivo
             if (appointment.reason.isNotBlank()) {
                 Column {
                     Text(
                         text = "Motivo",
-                        fontSize = 12.sp,
-                        color = Color(0xFF6B7280)
+                        style = typography.labelSmall.copy(color = colors.onSurfaceVariant)
                     )
                     Text(
                         text = appointment.reason,
-                        fontSize = 14.sp,
-                        color = Color(0xFF1F2937)
+                        style = typography.bodyMedium.copy(color = colors.onSurface)
                     )
                 }
             }
 
-            // boton para cancelar cita
+            // ❌ Botón cancelar
             if (onCancelClick != null && appointment.status == AppointmentStatus.CONFIRMED) {
                 OutlinedButton(
                     onClick = onCancelClick,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFFEF4444)
+                        contentColor = colors.error
+                    ),
+                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                        width = 1.dp,
+                        brush = SolidColor(colors.error)
                     )
                 ) {
                     Text("Cancelar cita")
