@@ -1,16 +1,51 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+# ===============================
+# ANDROID STUDIO / INTELLIJ IDEA
+# ===============================
+
+# Configuración de IDE (local)
 .idea/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Archivos específicos del usuario
+*.iml
+*.ipr
+*.iws
+
+# GRADLE Y COMPILACIÓN
+
+.gradle/
+build/
+*/build/
+captures/
+externalNativeBuild/
+.cxx/
+
+# ARCHIVOS DEL SISTEMA
+
+
+.DS_Store
+Thumbs.db
+
+# ARCHIVOS LOCALES / PRIVADOS
+
+local.properties
+.env
+.env.local
+.env.*
+*.keystore
+*.jks
+
+# LOGS Y TEMPORALES
+
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+
