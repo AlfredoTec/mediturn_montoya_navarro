@@ -16,6 +16,7 @@ import com.tecsup.mediturn.navigation.NavGraph
 import com.tecsup.mediturn.ui.theme.MediTurnTheme
 import com.tecsup.mediturn.ui.theme.ThemeViewModel
 import com.tecsup.mediturn.ui.theme.ThemeViewModelFactory
+import com.tecsup.mediturn.ui.ViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val prefs = ThemePreferenceManager(this)
+        val app = application as MediTurnApplication
+        val viewModelFactory = ViewModelFactory(app)
 
         setContent {
             val themeViewModel: ThemeViewModel = viewModel(
@@ -41,7 +44,8 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navController,
                         isDarkMode = isDarkMode,
-                        onToggleTheme = { themeViewModel.toggleTheme() }
+                        onToggleTheme = { themeViewModel.toggleTheme() },
+                        viewModelFactory = viewModelFactory
                     )
                 }
             }

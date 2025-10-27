@@ -15,9 +15,9 @@ data class DoctorDetailUiState(
     val error: String? = null
 )
 
-class DoctorDetailViewModel : ViewModel() {
-
-    private val doctorRepository = DoctorRepository()
+class DoctorDetailViewModel(
+    private val doctorRepository: DoctorRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DoctorDetailUiState())
     val uiState: StateFlow<DoctorDetailUiState> = _uiState.asStateFlow()

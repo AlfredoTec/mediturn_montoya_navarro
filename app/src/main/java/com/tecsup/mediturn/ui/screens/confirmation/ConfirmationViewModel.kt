@@ -12,9 +12,9 @@ data class ConfirmationUiState(
     val isLoading: Boolean = true
 )
 
-class ConfirmationViewModel : ViewModel() {
-
-    private val appointmentRepository = AppointmentRepository()
+class ConfirmationViewModel(
+    private val appointmentRepository: AppointmentRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConfirmationUiState())
     val uiState: StateFlow<ConfirmationUiState> = _uiState.asStateFlow()

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +22,8 @@ fun DoctorDetailScreen(
     doctorId: String,
     onNavigateBack: () -> Unit,
     onBookAppointment: (String) -> Unit,
-    viewModel: DoctorDetailViewModel = viewModel()
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: DoctorDetailViewModel = viewModel(factory = viewModelFactory)
 ) {
     LaunchedEffect(doctorId) {
         viewModel.loadDoctor(doctorId)

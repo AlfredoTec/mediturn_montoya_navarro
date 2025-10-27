@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.mediturn.ui.components.AppointmentCard
 import com.tecsup.mediturn.data.model.Appointment
@@ -24,7 +25,8 @@ import java.util.Date
 @Composable
 fun AppointmentsScreen(
     onNavigateBack: () -> Unit,
-    viewModel: AppointmentsViewModel = viewModel()
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: AppointmentsViewModel = viewModel(factory = viewModelFactory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showRescheduleDialog by remember { mutableStateOf(false) }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.mediturn.ui.components.AppointmentCard
 
@@ -18,7 +19,8 @@ fun ConfirmationScreen(
     appointmentId: String,
     onGoToHome: () -> Unit,
     onViewAppointments: () -> Unit,
-    viewModel: ConfirmationViewModel = viewModel()
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: ConfirmationViewModel = viewModel(factory = viewModelFactory)
 ) {
     LaunchedEffect(appointmentId) {
         viewModel.loadAppointment(appointmentId)

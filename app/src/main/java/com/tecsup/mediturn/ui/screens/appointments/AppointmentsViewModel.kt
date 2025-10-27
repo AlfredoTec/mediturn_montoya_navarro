@@ -14,8 +14,9 @@ data class AppointmentsUiState(
     val pastAppointments: List<Appointment> = emptyList()
 )
 
-class AppointmentsViewModel : ViewModel() {
-    private val appointmentRepository = AppointmentRepository()
+class AppointmentsViewModel(
+    private val appointmentRepository: AppointmentRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AppointmentsUiState())
     val uiState: StateFlow<AppointmentsUiState> = _uiState.asStateFlow()

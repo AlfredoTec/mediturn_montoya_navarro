@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.mediturn.data.model.ConsultationType
 import com.tecsup.mediturn.ui.components.TimeSlotButton
@@ -23,7 +24,8 @@ fun BookingScreen(
     doctorId: String,
     onNavigateBack: () -> Unit,
     onConfirmBooking: (String) -> Unit,
-    viewModel: BookingViewModel = viewModel()
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: BookingViewModel = viewModel(factory = viewModelFactory)
 ) {
     LaunchedEffect(doctorId) {
         viewModel.loadDoctor(doctorId)

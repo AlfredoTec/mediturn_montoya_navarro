@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.mediturn.ui.components.DoctorCard
 import kotlin.math.roundToInt
@@ -25,9 +26,8 @@ import kotlin.math.roundToInt
 fun SearchScreen(
     onNavigateBack: () -> Unit,
     onDoctorClick: (String) -> Unit,
-    viewModel: SearchViewModel = viewModel(
-        factory = SearchViewModelFactory()
-    )
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: SearchViewModel = viewModel(factory = viewModelFactory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val colors = MaterialTheme.colorScheme

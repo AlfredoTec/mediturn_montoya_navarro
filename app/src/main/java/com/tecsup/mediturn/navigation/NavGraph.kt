@@ -1,6 +1,7 @@
 package com.tecsup.mediturn.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,7 +20,8 @@ import com.tecsup.mediturn.ui.screens.confirmation.ConfirmationScreen
 fun NavGraph(
     navController: NavHostController,
     isDarkMode: Boolean,
-    onToggleTheme: () -> Unit
+    onToggleTheme: () -> Unit,
+    viewModelFactory: ViewModelProvider.Factory
 ) {
     NavHost(
         navController = navController,
@@ -39,6 +41,9 @@ fun NavGraph(
 
                 // Navegación: Pantalla de perfil
                 onProfileClick = { navController.navigate(Routes.Profile.route) },
+
+                // ViewModelFactory para inyección de dependencias
+                viewModelFactory = viewModelFactory
             )
         }
 
@@ -49,7 +54,10 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() },
 
                 // Navegación: Pantalla de detalle del doctor
-                onDoctorClick = { doctorId -> navController.navigate(Routes.DoctorDetail.createRoute(doctorId)) }
+                onDoctorClick = { doctorId -> navController.navigate(Routes.DoctorDetail.createRoute(doctorId)) },
+
+                // ViewModelFactory para inyección de dependencias
+                viewModelFactory = viewModelFactory
             )
         }
 
@@ -64,7 +72,8 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onBookAppointment = { doctorId ->
                     navController.navigate(Routes.Booking.createRoute(doctorId))
-                }
+                },
+                viewModelFactory = viewModelFactory
             )
         }
 
@@ -79,7 +88,8 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onConfirmBooking = { appointmentId ->
                     navController.navigate(Routes.Confirmation.createRoute(appointmentId))
-                }
+                },
+                viewModelFactory = viewModelFactory
             )
         }
 
@@ -87,7 +97,8 @@ fun NavGraph(
         composable(Routes.Appointments.route) {
             AppointmentsScreen(
                 // Navegación: Pantalla de inicio
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                viewModelFactory = viewModelFactory
             )
         }
 
@@ -116,7 +127,8 @@ fun NavGraph(
                 },
                 onViewAppointments = {
                     navController.navigate(Routes.Appointments.route)
-                }
+                },
+                viewModelFactory = viewModelFactory
             )
         }
     }

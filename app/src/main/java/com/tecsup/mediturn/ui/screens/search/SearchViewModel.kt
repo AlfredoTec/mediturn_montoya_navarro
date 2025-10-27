@@ -26,9 +26,9 @@ data class SearchUiState(
 /**
  * ViewModel para SearchScreen
  */
-class SearchViewModel : ViewModel() {
-
-    private val repository = DoctorRepository()
+class SearchViewModel(
+    private val repository: DoctorRepository
+) : ViewModel() {
 
     // Estados de búsqueda
     private val _searchQuery = MutableStateFlow("")
@@ -177,15 +177,3 @@ private data class SearchFilters(
     val maxPrice: Double?
 )
 
-/**
- * Factory para crear SearchViewModel
- */
-class SearchViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SearchViewModel() as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

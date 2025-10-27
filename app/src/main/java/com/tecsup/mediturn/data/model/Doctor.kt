@@ -1,9 +1,16 @@
 package com.tecsup.mediturn.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.Date
 
-// Clase que representa a los doctores
+/**
+ * Entidad Room que representa a los doctores en la base de datos
+ * Almacena información del doctor, especialidad, disponibilidad y precios
+ */
+@Entity(tableName = "doctors")
 data class Doctor(
+    @PrimaryKey
     val id: String,
     val name: String,
     val specialty: Specialty,

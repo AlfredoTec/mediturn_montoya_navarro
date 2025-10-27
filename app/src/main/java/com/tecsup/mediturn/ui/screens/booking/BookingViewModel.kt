@@ -27,10 +27,10 @@ data class BookingUiState(
     val consultationTypeError: String? = null
 )
 
-class BookingViewModel : ViewModel() {
-
-    private val doctorRepository = DoctorRepository()
-    private val appointmentRepository = AppointmentRepository()
+class BookingViewModel(
+    private val doctorRepository: DoctorRepository,
+    private val appointmentRepository: AppointmentRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BookingUiState())
     val uiState: StateFlow<BookingUiState> = _uiState.asStateFlow()
