@@ -48,4 +48,6 @@ local.properties
 *.swp
 *.swo
 
+# DOCUMENTACIÓN PRIVADA
 
+CLAUDE.md
