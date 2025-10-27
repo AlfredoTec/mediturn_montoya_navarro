@@ -2,6 +2,9 @@ package com.tecsup.mediturn.data.repository
 
 import com.tecsup.mediturn.data.model.Doctor
 import com.tecsup.mediturn.data.model.SampleData
+import com.tecsup.mediturn.data.model.Specialty
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class DoctorRepository {
 
@@ -45,5 +48,43 @@ class DoctorRepository {
     fun filterByTelehealth(telehealthOnly: Boolean): List<Doctor> {
         if (!telehealthOnly) return getAllDoctors()
         return SampleData.sampleDoctors.filter { it.isTelehealthAvailable }
+    }
+
+    /**
+     * Búsqueda avanzada de doctores con múltiples filtros
+     */
+    fun searchDoctorsAdvanced(
+        query: String = "",
+        specialty: Specialty? = null,
+        city: String? = null,
+        teleconsultation: Boolean? = null
+    ): Flow<List<Doctor>> = flow {
+        var results = SampleData.sampleDoctors
+
+        // Filtrar por query (nombre)
+        if (query.isNotBlank()) {
+            results = results.filter {
+                it.name.contains(query, ignoreCase = true)
+            }
+        }
+
+        // Filtrar por especialidad
+        if (specialty != null) {
+            results = results.filter { it.specialty == specialty }
+        }
+
+        // Filtrar por ciudad
+        if (city != null) {
+            results = results.filter {
+                it.location.contains(city, ignoreCase = true)
+            }
+        }
+
+        // Filtrar por teleconsulta
+        if (teleconsultation == true) {
+            results = results.filter { it.isTelehealthAvailable }
+        }
+
+        emit(results)
     }
 }

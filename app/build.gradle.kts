@@ -91,4 +91,7 @@ dependencies {
     // ===== Herramientas de Depuración =====
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Gson para TypeConverters - NUEVO ⭐
+    implementation("com.google.code.gson:gson:2.10.1")
 }

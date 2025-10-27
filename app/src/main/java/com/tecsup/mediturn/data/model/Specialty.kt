@@ -13,12 +13,12 @@ enum class Specialty(val displayName: String, val color: Long) {
 
         // Obtiene todas las especialidades
         fun getAll(): List<Specialty> {
-            return Specialty.entries
+            return values().toList()
         }
 
          // Obtiene los nombres para mostrar en UI
         fun getDisplayNames(): List<String> {
-            return Specialty.entries.map { it.displayName }
+            return values().map { it.displayName }
         }
     }
 }
