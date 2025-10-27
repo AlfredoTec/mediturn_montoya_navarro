@@ -32,8 +32,17 @@ fun BookingScreen(
     val uiState by viewModel.uiState.collectAsState()
     val colorScheme = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            snackbarHostState.showSnackbar(message)
+            viewModel.clearError()
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -71,17 +80,24 @@ fun BookingScreen(
                         .fillMaxWidth()
                         .padding(16.dp),
                     shape = RoundedCornerShape(12.dp),
-                    enabled = uiState.selectedTimeSlot != null,
+                    enabled = uiState.selectedTimeSlot != null && !uiState.isLoading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorScheme.primary,
                         contentColor = colorScheme.onPrimary
                     )
                 ) {
-                    Text(
-                        "Confirmar Reserva",
-                        modifier = Modifier.padding(8.dp),
-                        style = typography.labelLarge
-                    )
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            "Confirmar Reserva",
+                            modifier = Modifier.padding(8.dp),
+                            style = typography.labelLarge
+                        )
+                    }
                 }
             }
         },
@@ -182,6 +198,15 @@ fun BookingScreen(
                             }
                         }
                     }
+
+                    uiState.timeSlotError?.let { error ->
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = error,
+                            color = colorScheme.error,
+                            style = typography.bodySmall
+                        )
+                    }
                 }
             }
 
@@ -200,6 +225,19 @@ fun BookingScreen(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Describe tu motivo...") },
                         minLines = 3,
+                        maxLines = 6,
+                        isError = uiState.reasonError != null,
+                        supportingText = {
+                            uiState.reasonError?.let { error ->
+                                Text(text = error, color = colorScheme.error)
+                            }
+                            if (uiState.reasonError == null) {
+                                Text(
+                                    text = "${uiState.reason.length}/500",
+                                    color = colorScheme.onSurfaceVariant
+                                )
+                            }
+                        },
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = colorScheme.primary,

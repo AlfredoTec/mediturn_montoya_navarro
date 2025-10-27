@@ -26,6 +26,7 @@ import java.util.Locale
 fun AppointmentCard(
     appointment: Appointment,
     onCancelClick: (() -> Unit)? = null,
+    onRescheduleClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
@@ -173,20 +174,39 @@ fun AppointmentCard(
                 }
             }
 
-            // ❌ Botón cancelar
-            if (onCancelClick != null && appointment.status == AppointmentStatus.CONFIRMED) {
-                OutlinedButton(
-                    onClick = onCancelClick,
+            // Botones de acción
+            if (appointment.status == AppointmentStatus.CONFIRMED) {
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = colors.error
-                    ),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        width = 1.dp,
-                        brush = SolidColor(colors.error)
-                    )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Cancelar cita")
+                    if (onRescheduleClick != null) {
+                        OutlinedButton(
+                            onClick = onRescheduleClick,
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = colors.primary
+                            )
+                        ) {
+                            Text("Reprogramar")
+                        }
+                    }
+
+                    if (onCancelClick != null) {
+                        OutlinedButton(
+                            onClick = onCancelClick,
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = colors.error
+                            ),
+                            border = ButtonDefaults.outlinedButtonBorder.copy(
+                                width = 1.dp,
+                                brush = SolidColor(colors.error)
+                            )
+                        ) {
+                            Text("Cancelar")
+                        }
+                    }
                 }
             }
         }

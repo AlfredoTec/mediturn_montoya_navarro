@@ -49,4 +49,9 @@ class AppointmentsViewModel : ViewModel() {
         appointmentRepository.cancelAppointment(appointmentId)
         loadAppointments()
     }
+
+    fun rescheduleAppointment(appointmentId: String, newDate: java.util.Date) {
+        appointmentRepository.rescheduleAppointment(appointmentId, newDate)
+        loadAppointments()
+    }
 }
