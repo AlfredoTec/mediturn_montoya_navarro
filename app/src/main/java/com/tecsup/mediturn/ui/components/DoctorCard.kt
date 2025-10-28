@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.VideoCall
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tecsup.mediturn.data.model.Doctor
@@ -46,7 +49,7 @@ fun DoctorCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 🩺 Avatar circular del doctor
+            // Avatar circular del doctor con imagen local
             Box(
                 modifier = Modifier
                     .size(80.dp)
@@ -54,16 +57,27 @@ fun DoctorCard(
                     .background(colors.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = doctor.name.split(" ").map { it.first() }.take(2).joinToString(""),
-                    style = typography.titleMedium.copy(
-                        color = colors.onPrimaryContainer,
-                        fontWeight = FontWeight.Bold
+                if (doctor.imageResId != 0) {
+                    androidx.compose.foundation.Image(
+                        painter = painterResource(id = doctor.imageResId),
+                        contentDescription = "Foto de ${doctor.name}",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
-                )
+                } else {
+                    // Fallback: Icono de persona
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = colors.onPrimaryContainer
+                    )
+                }
             }
 
-            // 🧠 Información principal del doctor
+            // Información principal del doctor
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -85,16 +99,16 @@ fun DoctorCard(
                     style = typography.bodyMedium.copy(color = colors.onSurfaceVariant)
                 )
 
-                // 📅 Próxima disponibilidad (formateada)
+                // Próxima disponibilidad (formateada)
                 Text(
-                    text = "🕐 Próx. disponible: $formattedDate",
+                    text = "Próx. disponible: $formattedDate",
                     style = typography.labelSmall.copy(
                         color = colors.tertiary,
                         fontWeight = FontWeight.Medium
                     )
                 )
 
-                // 💰 Precio y teleconsulta
+                // Precio y teleconsulta
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

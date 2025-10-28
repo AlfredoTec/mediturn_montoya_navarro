@@ -94,4 +94,7 @@ dependencies {
 
     // Gson para TypeConverters - NUEVO ⭐
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // ===== Coil (Carga de imágenes) =====
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }

@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.tecsup.mediturn.data.model.SampleData
+import com.tecsup.mediturn.ui.components.CustomTopAppBar
 import com.tecsup.mediturn.ui.components.DoctorCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +31,7 @@ fun HomeScreen(
     viewModelFactory: ViewModelProvider.Factory,
     viewModel: HomeViewModel = viewModel(factory = viewModelFactory)
 ) {
-    val patient = SampleData.currentPatient
+    val patientName = "Aldy Montoya" // Usuario actual
     val uiState by viewModel.uiState.collectAsState()
 
     val colorScheme = MaterialTheme.colorScheme
@@ -39,33 +39,11 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            "Bienvenido",
-                            style = typography.bodySmall,
-                            color = colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            patient.name,
-                            style = typography.titleMedium,
-                            color = colorScheme.onSurface
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onProfileClick) {
-                        Icon(
-                            Icons.Default.Person,
-                            contentDescription = "Perfil",
-                            tint = colorScheme.primary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colorScheme.surface
-                )
+            CustomTopAppBar(
+                title = patientName,
+                subtitle = "Bienvenido",
+                onProfileClick = onProfileClick,
+                onNotificationsClick = { /* TODO: Implementar notificaciones */ }
             )
         },
         containerColor = colorScheme.background

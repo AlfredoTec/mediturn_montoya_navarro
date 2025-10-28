@@ -1,5 +1,6 @@
 package com.tecsup.mediturn.data.model
 
+import androidx.annotation.DrawableRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
@@ -17,7 +18,8 @@ data class Doctor(
     val experience: String,
     val nextAvailableSlot: Date,
     val pricePerConsultation: Double,
-    val imageUrl: String = "",
+    @DrawableRes
+    val imageResId: Int = 0,
     val isTelehealthAvailable: Boolean = false,
     val location: String,
     val about: String = "",

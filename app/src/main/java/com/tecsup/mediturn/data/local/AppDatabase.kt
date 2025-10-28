@@ -10,7 +10,6 @@ import com.tecsup.mediturn.data.local.dao.AppointmentDao
 import com.tecsup.mediturn.data.local.dao.DoctorDao
 import com.tecsup.mediturn.data.model.Appointment
 import com.tecsup.mediturn.data.model.Doctor
-import com.tecsup.mediturn.data.model.SampleData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

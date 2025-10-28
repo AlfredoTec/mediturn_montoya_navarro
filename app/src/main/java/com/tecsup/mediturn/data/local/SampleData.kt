@@ -1,5 +1,7 @@
-package com.tecsup.mediturn.data.model
+package com.tecsup.mediturn.data.local
 
+import com.tecsup.mediturn.R
+import com.tecsup.mediturn.data.model.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -7,16 +9,6 @@ object SampleData {
 
     // Formatos de fecha y hora
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    private val birthDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-    // Paciente
-    val currentPatient = Patient(
-        id = "1",
-        name = "Aldy Montoya",
-        email = "aldy.montoya@gmail.com",
-        phone = "+51 987 654 321",
-        dateOfBirth = birthDateFormat.parse("15/03/2006")!!
-    )
 
     // Time Slots
     val sampleTimeSlots = listOf(
@@ -32,7 +24,7 @@ object SampleData {
         TimeSlot("slot_10", dateFormat.parse("29/01/2025 16:00")!!)
     )
 
-    // Doctores (specialty -> enum)
+    // Doctores (specialty -> enum) con imágenes en drawable-nodpi
     val sampleDoctors = listOf(
         Doctor(
             id = "doc_1",
@@ -41,6 +33,7 @@ object SampleData {
             experience = "15 años",
             nextAvailableSlot = Date(System.currentTimeMillis() + 2 * 60 * 60 * 1000), // Hoy +2 horas
             pricePerConsultation = 120.0,
+            imageResId = R.drawable.doctor_1,
             isTelehealthAvailable = true,
             location = "Clínica San Pablo, Surco",
             about = "Especialista en cardiología con amplia experiencia en el diagnóstico y tratamiento de enfermedades cardiovasculares.",
@@ -53,6 +46,7 @@ object SampleData {
             experience = "10 años",
             nextAvailableSlot = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000 + 10 * 60 * 60 * 1000), // Mañana 10 AM aprox
             pricePerConsultation = 80.0,
+            imageResId = R.drawable.doctor_2,
             isTelehealthAvailable = true,
             location = "Clínica Ricardo Palma, San Isidro",
             about = "Médico general con enfoque en medicina preventiva y atención primaria.",
@@ -65,6 +59,7 @@ object SampleData {
             experience = "12 años",
             nextAvailableSlot = Date(System.currentTimeMillis() + 5 * 60 * 60 * 1000), // Hoy +5 horas
             pricePerConsultation = 100.0,
+            imageResId = R.drawable.doctor_3,
             isTelehealthAvailable = false,
             location = "Hospital Rebagliati, Jesús María",
             about = "Pediatra especializada en el cuidado integral de niños y adolescentes.",
@@ -77,6 +72,7 @@ object SampleData {
             experience = "8 años",
             nextAvailableSlot = Date(System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000 + 11 * 60 * 60 * 1000), // Jueves 11 AM aprox
             pricePerConsultation = 110.0,
+            imageResId = R.drawable.doctor_4,
             isTelehealthAvailable = true,
             location = "Dermacentro, Miraflores",
             about = "Dermatólogo especializado en dermatología clínica y estética.",
@@ -89,6 +85,7 @@ object SampleData {
             experience = "18 años",
             nextAvailableSlot = Date(System.currentTimeMillis() + 6 * 24 * 60 * 60 * 1000 + 14 * 60 * 60 * 1000), // Viernes 2 PM aprox
             pricePerConsultation = 150.0,
+            imageResId = R.drawable.doctor_5,
             isTelehealthAvailable = false,
             location = "Clínica Anglo Americana, San Isidro",
             about = "Neuróloga con subespecialidad en cefaleas y trastornos del movimiento.",
@@ -101,6 +98,7 @@ object SampleData {
             experience = "14 años",
             nextAvailableSlot = Date(System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000 + 16 * 60 * 60 * 1000), // Lunes 4 PM aprox
             pricePerConsultation = 130.0,
+            imageResId = R.drawable.doctor_6,
             isTelehealthAvailable = false,
             location = "Clínica San Felipe, Jesús María",
             about = "Traumatólogo especializado en lesiones deportivas y cirugía artroscópica.",
