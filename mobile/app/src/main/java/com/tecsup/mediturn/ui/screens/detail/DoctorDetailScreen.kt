@@ -1,5 +1,6 @@
 package com.tecsup.mediturn.ui.screens.detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -111,21 +114,34 @@ fun DoctorDetailScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(CircleShape)
-                                    .background(colorScheme.primary),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = doctor.name.split(" ")
-                                        .map { it.first() }
-                                        .take(2)
-                                        .joinToString(""),
-                                    style = typography.headlineSmall,
-                                    color = colorScheme.onPrimary
+                            // Mostrar imagen del doctor si está disponible
+                            if (doctor.imageResId != 0) {
+                                Image(
+                                    painter = painterResource(id = doctor.imageResId),
+                                    contentDescription = "Foto de ${doctor.name}",
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape),
+                                    contentScale = ContentScale.Crop
                                 )
+                            } else {
+                                // Fallback a iniciales si no hay imagen
+                                Box(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .background(colorScheme.primary),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = doctor.name.split(" ")
+                                            .map { it.first() }
+                                            .take(2)
+                                            .joinToString(""),
+                                        style = typography.headlineSmall,
+                                        color = colorScheme.onPrimary
+                                    )
+                                }
                             }
                             Spacer(Modifier.height(12.dp))
                             Text(
@@ -141,14 +157,14 @@ fun DoctorDetailScreen(
                         }
                     }
 
-                    // 📊 Stats
+                    //  Stats
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             StatItem(
-                                emoji = "📅",
+                                emoji = "",
                                 value = doctor.experience,
                                 label = "Experiencia",
                                 colorScheme = colorScheme,

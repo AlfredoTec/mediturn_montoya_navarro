@@ -95,6 +95,12 @@ dependencies {
     // Gson para TypeConverters - NUEVO ⭐
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // ===== Retrofit (API REST) =====
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
     // ===== Coil (Carga de imágenes) =====
     implementation("io.coil-kt:coil-compose:2.5.0")
 }

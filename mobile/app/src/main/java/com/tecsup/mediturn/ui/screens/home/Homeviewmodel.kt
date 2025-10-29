@@ -3,6 +3,7 @@ package com.tecsup.mediturn.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecsup.mediturn.data.repository.DoctorRepository
+import com.tecsup.mediturn.data.repository.UnifiedDoctorRepository
 import com.tecsup.mediturn.data.model.Doctor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val doctorRepository: DoctorRepository
+    private val doctorRepository: DoctorRepository? = null,  // Legacy, ahora opcional
+    private val unifiedRepository: UnifiedDoctorRepository? = null  // Nuevo, soporta Room y Retrofit
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -26,9 +28,21 @@ class HomeViewModel(
 
     private fun loadFeaturedDoctors() {
         viewModelScope.launch {
-            // Observa el Flow de Room que se actualiza cuando hay datos disponibles
-            doctorRepository.getAllDoctorsFlow().collect { doctors ->
-                _uiState.value = _uiState.value.copy(featuredDoctors = doctors.take(6))
+            when {
+                unifiedRepository != null -> {
+                    unifiedRepository.getAllDoctorsFlow().collect { doctors: List<Doctor> ->
+                        _uiState.value = _uiState.value.copy(
+                            featuredDoctors = doctors.take(6)
+                        )
+                    }
+                }
+                doctorRepository != null -> {
+                    doctorRepository.getAllDoctorsFlow().collect { doctors: List<Doctor> ->
+                        _uiState.value = _uiState.value.copy(
+                            featuredDoctors = doctors.take(6)
+                        )
+                    }
+                }
             }
         }
     }

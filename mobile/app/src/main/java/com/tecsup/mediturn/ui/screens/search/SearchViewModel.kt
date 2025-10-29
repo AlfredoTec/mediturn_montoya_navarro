@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.tecsup.mediturn.data.model.Doctor
 import com.tecsup.mediturn.data.model.Specialty
 import com.tecsup.mediturn.data.repository.DoctorRepository
+import com.tecsup.mediturn.data.repository.UnifiedDoctorRepository
 import kotlinx.coroutines.flow.*
 
 /**
@@ -27,7 +28,8 @@ data class SearchUiState(
  * ViewModel para SearchScreen
  */
 class SearchViewModel(
-    private val repository: DoctorRepository
+    private val repository: DoctorRepository? = null,  // Legacy
+    private val unifiedRepository: UnifiedDoctorRepository? = null  // Nuevo
 ) : ViewModel() {
 
     // Estados de búsqueda
@@ -55,18 +57,41 @@ class SearchViewModel(
             telehealthOnly = params[3] as Boolean,
             maxPrice = params[4] as Double?
         )
-    }.flatMapLatest { filters ->
-        repository.searchDoctorsAdvanced(
-            query = filters.query,
-            specialty = filters.specialty,
-            city = filters.location,
-            teleconsultation = if (filters.telehealthOnly) true else null
-        ).map { doctors ->
-            if (filters.maxPrice != null) {
-                doctors.filter { it.pricePerConsultation <= filters.maxPrice }
-            } else {
-                doctors
+    }.flatMapLatest { filters: SearchFilters ->
+        when {
+            unifiedRepository != null -> {
+                unifiedRepository.searchDoctorsAdvanced(
+                    query = filters.query,
+                    specialty = filters.specialty,
+                    city = filters.location,
+                    teleconsultation = if (filters.telehealthOnly) true else null
+                ).map { doctors: List<Doctor> ->
+                    if (filters.maxPrice != null) {
+                        doctors.filter { doctor: Doctor ->
+                            doctor.pricePerConsultation <= filters.maxPrice
+                        }
+                    } else {
+                        doctors
+                    }
+                }
             }
+            repository != null -> {
+                repository.searchDoctorsAdvanced(
+                    query = filters.query,
+                    specialty = filters.specialty,
+                    city = filters.location,
+                    teleconsultation = if (filters.telehealthOnly) true else null
+                ).map { doctors: List<Doctor> ->
+                    if (filters.maxPrice != null) {
+                        doctors.filter { doctor: Doctor ->
+                            doctor.pricePerConsultation <= filters.maxPrice
+                        }
+                    } else {
+                        doctors
+                    }
+                }
+            }
+            else -> flowOf(emptyList<Doctor>())
         }
     }.stateIn(
         scope = viewModelScope,
@@ -176,4 +201,3 @@ private data class SearchFilters(
     val telehealthOnly: Boolean,
     val maxPrice: Double?
 )
-
