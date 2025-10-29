@@ -91,20 +91,7 @@ Criterios de Aceptación:
 
 **Prioridad: Alta**
 
-**HU-06: Recordatorios de Citas**
-
-Como paciente, quiero recibir recordatorios de mis próximas citas para no olvidar mis consultas médicas
-
-Criterios de Aceptación:
-
-- Notificación 24 horas antes
-- Notificación 1 hora antes
-- Información completa en notificación (médico, hora, especialidad)
-- Acceso directo a cita desde notificación
-
-**Prioridad: Media**
-
-**HU-07: Perfil de Usuario**
+**HU-06: Perfil de Usuario**
 
 Como paciente, quiero gestionar mi perfil personal para mantener mi información actualizada
 
@@ -112,7 +99,13 @@ Criterios de Aceptación:
 
 - Visualización de perfil
 - Edición de información personal
-- Historial médico resumido
-- Opción de cerrar sesión
 
 **Prioridad: Baja**
+
+## Arquitectura del Proyecto
+<img width="205" height="335" alt="image" src="https://github.com/user-attachments/assets/7944612a-6fa0-43d2-9f7d-d96ba6ba2f09" />
+<img width="313" height="550" alt="image" src="https://github.com/user-attachments/assets/20fe9650-3526-4309-b3a1-51c69c530bbd" />
+<img width="240" height="461" alt="image" src="https://github.com/user-attachments/assets/8576eded-5d13-413c-87e3-724b4cc7f88a" />
+<img width="284" height="484" alt="image" src="https://github.com/user-attachments/assets/93ac254e-441d-4814-9d9c-45b618ff2561" />
+
+
